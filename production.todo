@@ -1,0 +1,18 @@
+Production:
+  ☐ config/passwd write permission
+  ☐ productions permissions
+  ☐ requires mcrpyt extension
+  ☐ markdown/ write permission
+  ☐ write permission to media
+
+TODO:
+  ☐ config/passwd, markdown, media check file and permissions
+  ☐ mime type check left
+  ☐ create tile to filename remove special characters /#\ etc, empty
+  ☐ $_GET check show.php
+  ☐ presenter disconnected check
+  ☐ remove <br>
+  ☐ check folder file exists
+  ☐ media folder permissions check
+  ☐ key and touch support
+  ☐ footer
