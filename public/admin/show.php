@@ -56,7 +56,7 @@ $s = new Slide(APP_PATH.'/markdown/'.$fileName);
 
 
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="../js/vendor/jquery-1.js"></script>
     <script src="../js/vendor/jquery.mobile.custom.min.js"></script>
 		<script type="text/javascript">
       active = false;

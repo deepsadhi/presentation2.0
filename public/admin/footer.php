@@ -5,7 +5,6 @@
           <div class="col-lg-12">
             <ul class="list-unstyled">
               <li class="pull-right"><a href="#top">Feedback</a></li>
-              <li><a href="http://bctians.com/presentation2.0">Presentation2.0</a></li>
               <li><a href="https://github.com/deepsadhi/presentation2.0">GitHub</a></li>
             </ul>
           </div>
