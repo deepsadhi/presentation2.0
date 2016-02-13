@@ -7,6 +7,7 @@ class Session
 	public function __construct()
 	{
 		if(session_id() == ''){
+			session_save_path('/tmp');
 		    session_start();
 		}
 
