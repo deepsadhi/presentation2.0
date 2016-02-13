@@ -6,9 +6,9 @@
   <title>Presentation2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link rel="stylesheet" href="../css/vendor/bootstrap.css" media="screen">
-  <link rel="stylesheet" href="../css/custom.css">
-  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="css/vendor/bootstrap.css" media="screen">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="css/main.css">
  </head>
   <body>
 
