@@ -60,4 +60,11 @@ class Session
 		}
 	}
 
+	public function startSession($username)
+	{
+		$_SESSION['login'] = true;
+		$_SESSION['username'] = $username;
+	}
+
+
 }
