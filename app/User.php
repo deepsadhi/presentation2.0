@@ -2,39 +2,66 @@
 
 namespace App;
 
+use App\Database;
+use App\Session;
+
 class User
 {
-	// public function authenticate($username, $password)
-	// {
-	// 	$p    = new Password;
-	// 	$user = 'admin';
+	/**
+	 * Database connection
+	 * @var PDO object
+	 */
+	private $_db;
 
-	// 	if ($username == $user && $password == trim($p->read()))
-	// 	{
-	// 		$_SESSION['login'] = true;
-	// 		return true;
-	// 	}
-	// 	else
-	// 	{
-	// 		return false;
-	// 	}
-	// }
-
-	public function authenticate($username, $password)
+	/**
+	 * Create database connection
+	 */
+	public function __construct()
 	{
-		$p      = new Password;
-		$secret = trim($p->read());
-		$secret = explode('::||::', $secret);
+		$this->_db = new Database;
+	}
 
-		if ($username == $secret[0] && $password == $secret[1])
+	/**
+	 * Verify user entered password match with correct password
+	 * @param  string $actualPassword  User actual password
+	 * @param  string $enterdPassword  User entered password
+	 * @return bool                    Both password match or not
+	 */
+	private function _verifyPassword($actualPassword, $enterdPassword)
+	{
+		if ($actualPassword == $enterdPassword)
 		{
-			$_SESSION['login'] = true;
 			return true;
 		}
 		else
 		{
 			return false;
 		}
+	}
+
+
+	public function authenticate($username, $password)
+	{
+		$data = array('type'  => 'STR',
+		              'key'   => 'username',
+		              'value' => $username);
+
+		if ($this->_db->getValueOf('users', $data))
+		{
+			if ($this->_db->rowCount > 0)
+			{
+				$actualPassword = $this->_db->result['password'];
+				if ($this->_verifyPassword($actualPassword, $password) === true)
+				{
+					$session = new Session;
+					$session->startSession($username);
+
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public function authenticatePassword($password)
