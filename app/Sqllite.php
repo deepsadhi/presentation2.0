@@ -10,7 +10,6 @@ class Sqllite
 {
     /**
      * Store POD object
-     *
      * @var object
      */
     private static $_db;
@@ -43,7 +42,6 @@ class Sqllite
 
     /**
      * Checks for a DB object and creates one if it's not created
-     *
      * @return object PDO object
      */
      public static function getConnection(){
