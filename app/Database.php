@@ -11,24 +11,28 @@ class Database
 {
     /**
      * Database connection
+     *
      * @var PDO object
      */
     private $_db;
 
     /**
      * Bind parameter
+     *
      * @var PDO object
      */
     private $_stmt;
 
     /**
      * Number of rows of last query
+     *
      * @var int
      */
     public $rowCount;
 
     /**
      * Query result
+     *
      * @var array
      */
     public $result;
@@ -51,6 +55,7 @@ class Database
 
     /**
      * Bind parameter
+     *
      * @param  array  $data Data to be inserted to table
      */
     private function _bind(array $data)
@@ -74,8 +79,10 @@ class Database
 
     /**
      * Insert data to table
+     *
      * @param  string $table Table name
      * @param  array  $data  Data to be inserted in table
+     *
      * @return bool   Success or failure to set value
      */
     public function setValueOf($table, array $data)
@@ -110,8 +117,10 @@ class Database
 
     /**
      * Get value of filed from a table
+     *
      * @param  string $table Name of table
      * @param  array  $data  Query data
+     *
      * @return bool          Success or failure to get value
      */
     public function getValueOf($table, array $data)
