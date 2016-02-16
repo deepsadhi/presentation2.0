@@ -4,51 +4,89 @@ namespace App;
 
 class Session
 {
-	$tokenName;
+	/**
+	 * Form input field name for token
+	 *
+	 * @var [type]
+	 */
+	public static $tokenName;
 
-	public function __construct()
+	/**
+	 * Start session
+	 */
+	public static function __construct()
 	{
 		if(session_id() == ''){
 			session_save_path('/tmp');
 		    session_start();
 		}
+	}
 
+	/**
+	 * Set session user
+	 *
+	 * @param string $user User for whom session needs to be registered
+	 */
+	public static function setUser($user)
+	{
+		$_SESSION['user'] = $user;
+	}
 
-
-		$sf = $_SERVER['SCRIPT_FILENAME'];
-		$sf = explode(DIRECTORY_SEPARATOR, $sf);
-		if (end($sf) != 'index.php')
+	/**
+	 * Get user who is logged in
+	 *
+	 * @return string|null User whose session is running
+	 */
+	public static function getUser()
+	{
+		if (isset($_SESSION['user']))
 		{
-			if(!isset($_SESSION['login']) ||
-			   (isset($_SESSION['login']) && $_SESSION['login'] != true))
-			{
-			    header("Location: index.php");
-			    exit;
-			}
+
+			return $_SESSION['user'];
 		}
-		else if (end($sf) == 'index.php')
+		else
 		{
-			if (isset($_SESSION['login']) && $_SESSION['login'] == true)
-			{
-				header('Location: home.php');
-				exit;
-			}
+			return null;
 		}
 	}
 
-	public function setMessage($alert, $message)
+
+	/**
+	 * Set message and message alert type to session. To exchange message
+	 * between pages
+	 *
+	 * @param string $alert   Message alert type
+	 * @param string $message Message to be stored
+	 */
+	public static function setMessage($alert, $message)
 	{
 		$_SESSION['message'] = array('alert' => $alert, 'message' => $message);
 	}
 
-	public function getMessage()
+	/**
+	 * Get session message
+	 * @return array|null Message stored in session
+	 */
+	public static function getMessage()
 	{
-		$message = $_SESSION['message'];
-		unset($_SESSION['message']);
-		return $message;
+		if (issset($_SESSION['message']))
+		{
+			$message = $_SESSION['message'];
+			unset($_SESSION['message']);
+			return $message;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
-	public function isMessage()
+	/**
+	 * Check session has message or not
+	 *
+	 * @return boolean There was message or not
+	 */
+	public static function hasMessage()
 	{
 		if (isset($_SESSION['message']))
 		{
@@ -60,30 +98,44 @@ class Session
 		}
 	}
 
-	public function startSession($username)
-	{
-		$_SESSION['login'] = true;
-		$_SESSION['username'] = $username;
-	}
-
+	/**
+	 * Generate CSRF value and set to session
+	 */
 	public function setCsrfToken()
 	{
-		$this->tokenName = 'token';
+		self::$tokenName = 'token';
 
-		if (!isset($_SESSION[$this->tokenName]))
+		if (!isset($_SESSION[self::$tokenName]))
 		{
-		    $_SESSION[$this->tokenName] = md5(uniqid(mt_rand(), true));
+		    $_SESSION[self::$tokenName] = md5(uniqid(mt_rand(), true));
 		}
 	}
 
+	/**
+	 * Get value of CSRF token
+	 *
+	 * @return string|null CSRF token value
+	 */
 	public function getCsrfToken()
 	{
-		return $_SESSION[$this->tokenName];
+		if (isset($_SESSION[self::$tokenName))
+		{
+			return $_SESSION[self::$tokenName];
+		}
+		else
+		{
+			return null;
+		}
 	}
 
+	/**
+	 * Get name of CSRF token input field
+	 *
+	 * @return string Name of token input field
+	 */
 	public function getTokenName()
 	{
-		return $this->tokenName;
+		return self::$tokenName;
 	}
 
 }
