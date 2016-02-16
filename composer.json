@@ -1,7 +1,10 @@
 {
     "require": {
         "erusev/parsedown": "1.6.0",
-        "cboden/ratchet": "0.3.4"
+        "cboden/ratchet": "0.3.4",
+        "filp/whoops": "2.0.0",
+        "ircmaxell/filterus": "1.0.x-dev"
+
     },
     "autoload": {
         "psr-4": {
