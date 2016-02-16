@@ -4,6 +4,8 @@ namespace App;
 
 class Session
 {
+	$tokenName;
+
 	public function __construct()
 	{
 		if(session_id() == ''){
@@ -11,9 +13,7 @@ class Session
 		    session_start();
 		}
 
-		if(!isset($_SESSION['token'])){
-		    $_SESSION['token'] = md5(uniqid(mt_rand(), true));
-		}
+
 
 		$sf = $_SERVER['SCRIPT_FILENAME'];
 		$sf = explode(DIRECTORY_SEPARATOR, $sf);
@@ -66,5 +66,24 @@ class Session
 		$_SESSION['username'] = $username;
 	}
 
+	public function setCsrfToken()
+	{
+		$this->tokenName = 'token';
+
+		if (!isset($_SESSION[$this->tokenName]))
+		{
+		    $_SESSION[$this->tokenName] = md5(uniqid(mt_rand(), true));
+		}
+	}
+
+	public function getCsrfToken()
+	{
+		return $_SESSION[$this->tokenName];
+	}
+
+	public function getTokenName()
+	{
+		return $this->tokenName;
+	}
 
 }
