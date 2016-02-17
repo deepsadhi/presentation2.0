@@ -6,7 +6,7 @@ use \PDO;
 use \RuntimeException;
 use \PDOException;
 
-class Sqllite
+class Sqlite
 {
     /**
      * Store POD object
