@@ -11,11 +11,11 @@ require_once APP_PATH.'/bootstrap/define.php';
 
 use App\Session;
 use App\File;
-use App\Sqllite;
+use App\Sqlite;
 
 $s = new Session;
 
-$db = Sqllite::getConnection();
+$db = Sqlite::getConnection();
 
 $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
