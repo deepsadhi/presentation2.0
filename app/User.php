@@ -23,8 +23,10 @@ class User
 
 	/**
 	 * Verify user entered password match with correct password
+	 *
 	 * @param  string $actualPassword  User actual password
 	 * @param  string $enterdPassword  User entered password
+	 *
 	 * @return bool                    Both password match or not
 	 */
 	private function _verifyPassword($actualPassword, $enterdPassword)
@@ -53,9 +55,7 @@ class User
 				$actualPassword = $this->_db->result['password'];
 				if ($this->_verifyPassword($actualPassword, $password) === true)
 				{
-					$session = new Session;
-					$session->startSession($username);
-
+					Session::setUserId($this->_db->result['id']);
 					return true;
 				}
 			}
