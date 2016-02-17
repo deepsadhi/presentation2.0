@@ -2,29 +2,52 @@
 
 require_once '../../bootstrap/bootstrap.php';
 
+
 use App\User;
+use App\Form;
 
-$msg   = 'Log In!';
-$user  ='';
-$error = '';
+$form = new Form('login');
 
-if (isset($_POST['token']) && $_POST['token'] == $_SESSION['token'])
+if (isset($_POST[$form->tokenName]))
 {
-	$user  = isset($_POST['username']) ? $_POST['username'] : null;
-	$pass  = isset($_POST['password']) ? $_POST['password'] : null;
-	$error = 'has-error';
-
-	$u = new User;
-	if ($u->authenticate($user, $pass) == true)
-	{
-		header('Location: home.php');
-		exit();
-	}
-	else
-	{
-		$msg = 'Incorrect Username/Password';
-	}
+    if ($form->validate())
+    {
+        $user = new User;
+        if ($user->authenticate($form->inputValue['username'],
+                                $form->inputValue['password']) === true
+            )
+        {
+            header('Location: home.php');
+            exit;
+        }
+    }
 }
+
+
+// use App\User;
+// use App\Session;
+
+// $msg   = 'Log In!';
+// $user  ='';
+// $error = '';
+
+// if (isset($_POST['token']) && $_POST['token'] == $_SESSION['token'])
+// {
+// 	$user  = isset($_POST['username']) ? $_POST['username'] : null;
+// 	$pass  = isset($_POST['password']) ? $_POST['password'] : null;
+// 	$error = 'has-error';
+
+// 	$u = new User;
+// 	if ($u->authenticate($user, $pass) == true)
+// 	{
+// 		header('Location: home.php');
+// 		exit();
+// 	}
+// 	else
+// 	{
+// 		$msg = 'Incorrect Username/Password';
+// 	}
+// }
 ?>
 
 <!DOCTYPE html>
@@ -62,15 +85,15 @@ if (isset($_POST['token']) && $_POST['token'] == $_SESSION['token'])
 					<div class="col-lg-3">
 					</div>
 					<div class="col-lg-6">
-            <div class="well bs-component <?php echo $error; ?>">
+            <div class="well bs-component">
               <form class="form-horizontal" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-		          	<input type="hidden" value="<?php echo $_SESSION['token']; ?>" name="token">
+		          	<input type="hidden" value="<?php echo $form->tokenValue; ?>" name="<?php echo $form->tokenName; ?>">
                 <fieldset>
-                  <legend><?php echo $msg; ?></legend>
+                  <legend></legend>
                   <div class="form-group">
                     <label class="col-lg-3 control-label" for="inputEmail">Username</label>
                     <div class="col-lg-8">
-                      <input type="text" value="<?php echo $user; ?>" name="username"  id="inputEmail" class="form-control">
+                      <input type="text" value="<?php if (isset($form->inputFilterValue['username'])) echo $form->inputFilterValue['username']; ?>" name="username"  id="inputEmail" class="form-control">
                     </div>
                   </div>
                   <div class="form-group">
