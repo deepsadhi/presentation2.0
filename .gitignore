@@ -2,3 +2,6 @@
 /tmp
 *.sublime-project
 *.sublime-workspace
+*~
+*.swp
+.editorconfig
