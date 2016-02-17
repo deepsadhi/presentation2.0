@@ -5,16 +5,9 @@ namespace App;
 class Session
 {
 	/**
-	 * Form input field name for token
-	 *
-	 * @var [type]
-	 */
-	public static $tokenName;
-
-	/**
 	 * Start session
 	 */
-	public static function __construct()
+	public function __construct()
 	{
 		if(session_id() == ''){
 			session_save_path('/tmp');
@@ -27,9 +20,9 @@ class Session
 	 *
 	 * @param string $user User for whom session needs to be registered
 	 */
-	public static function setUser($user)
+	public static function setUserID($userId)
 	{
-		$_SESSION['user'] = $user;
+		$_SESSION['user_id'] = $userId;
 	}
 
 	/**
@@ -39,10 +32,10 @@ class Session
 	 */
 	public static function getUser()
 	{
-		if (isset($_SESSION['user']))
+		if (isset($_SESSION['user_id']))
 		{
 
-			return $_SESSION['user'];
+			return $_SESSION['user_id'];
 		}
 		else
 		{
@@ -52,8 +45,8 @@ class Session
 
 
 	/**
-	 * Set message and message alert type to session. To exchange message
-	 * between pages
+	 * Set message and message alert type to session
+	 * To exchange message between pages
 	 *
 	 * @param string $alert   Message alert type
 	 * @param string $message Message to be stored
@@ -65,6 +58,7 @@ class Session
 
 	/**
 	 * Get session message
+	 *
 	 * @return array|null Message stored in session
 	 */
 	public static function getMessage()
@@ -99,43 +93,27 @@ class Session
 	}
 
 	/**
-	 * Generate CSRF value and set to session
-	 */
-	public function setCsrfToken()
-	{
-		self::$tokenName = 'token';
-
-		if (!isset($_SESSION[self::$tokenName]))
-		{
-		    $_SESSION[self::$tokenName] = md5(uniqid(mt_rand(), true));
-		}
-	}
-
-	/**
 	 * Get value of CSRF token
 	 *
-	 * @return string|null CSRF token value
+	 * @return string CSRF token value
 	 */
-	public function getCsrfToken()
+	public static function getCsrfToken()
 	{
-		if (isset($_SESSION[self::$tokenName))
+		if (!isset($_SESSION['csrf_token']))
 		{
-			return $_SESSION[self::$tokenName];
+		    $_SESSION['csrf_token'] = md5(uniqid(mt_rand(), true));
 		}
-		else
-		{
-			return null;
-		}
+
+		return $_SESSION['csrf_token'];
 	}
 
 	/**
-	 * Get name of CSRF token input field
-	 *
-	 * @return string Name of token input field
+	 * Destroy CSRF token
 	 */
-	public function getTokenName()
+	public static function destroyCsrfToken()
 	{
-		return self::$tokenName;
+		$_SESSION['token'] = null;
+		unset($_SESSION['token']);
 	}
 
 }
