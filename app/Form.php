@@ -3,225 +3,117 @@
 namespace App;
 
 use App\Session;
-use App\User;
+use \Exception;
+use Filterus\Filter;
 
 class Form
 {
-	public $title;
-	public $content;
-	public $errorFile;
-	public $errorTitle;
-	public $errorContent;
-	public $errorMessage;
-	public $errorNewPass;
-	public $errorOldPass;
-	public $errorNewUser;
+	private $_inputField     = array();
 
-	public $user;
+	public $tokenName;
+	public $tokenValue;
 
-	public function __construct()
+	public $error            = false;
+	public $inputName        = array();
+	public $inputError       = array();
+	public $inputValue       = array();
+	public $inputFilterValue = array();
+
+
+	/**
+	 * Initialize form fields
+	 *
+	 * @param string $type Type of form
+	 */
+	public function __construct($type)
 	{
-		$this->errorFile    = '';
-		$this->errorTitle   = '';
-		$this->errorContent = '';
-		$this->errorMessage = null;
-	}
+		$this->tokenName  = '_token';
+		$this->tokenValue = Session::getCsrfToken();
 
-	public function initProfile()
-	{
-		$u = new User;
-		$this->user = $u->getUsername();
-	}
-
-	public function init()
-	{
-		$this->title   = '';
-		$this->content = '';
-	}
-
-	public function edit($fn)
-	{
-		if (!file_exists(APP_PATH.'/markdown/'.$fn))
+		switch ($type)
 		{
-			$s = new Session;
-			$s->setMessage('warning', 'Sorry! slide does not exist');
+			case 'login':
+			{
+				$this->_inputField['username'] = array(
+				                               'filter' => 'alnum,min:3,max:10)'
+				                               );
+				$this->_inputField['password'] = array(
+				                               'filter' => 'raw,min:6,max:20'
+				                               );
+				break;
+ 			}
+
+			default:
+			{
+			}
 		}
-
-		$this->title = str_replace('.md', '', $fn);
-		$this->content = file_get_contents(APP_PATH.'/markdown/'.$fn);
 	}
 
-	public function procede()
+	/**
+	 * Check Cross Site Request Forgery
+	 *
+	 * @return bool Request is valid or not
+	 */
+	private function _isCsrf()
 	{
-		$s = new Session;
-
-		if (isset($_GET['file']))
+		if (isset($_POST[$this->tokenName]) &&
+		    $_POST[$this->tokenName] == $this->tokenValue
+		   )
 		{
-			$msg = 'updated';
+			return true;
 		}
 		else
 		{
-			$msg = 'created';
+			return false;
 		}
-
-		try
-		{
-			$this->content = isset($_POST['content']) ? $_POST['content'] : '';
-
-			if (!isset($_POST['title']) || empty($_POST['title']))
-			{
-				$this->errorTitle = 'has-error';
-				throw new \Exception('Please enter tile');
-			}
-			$this->title = preg_replace('/[^a-z0-9._-]/i', '', $_POST['title']);
-
-			$fn  = APP_PATH.'/markdown/'.$this->title.'.md';
-
-			if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
-			{
-				$allowedExts = array('md', 'markdown');
-				$temp        = explode(".", $_FILES['file']["name"]);
-				$extension   = strtolower(end($temp));
-
-				if (in_array($extension, $allowedExts))
-				{
-				   	if ($_FILES['file']["error"] > 0)
-				   	{
-				        $this->errorFile = 'has-error';
-				        throw new \Exception('Error! while uploading file');
-				   	}
-				   	else if(move_uploaded_file($_FILES["file"]["tmp_name"],$fn))
-				   	{
-					    $s->setMessage('success',
-					        "Slide <b>{$this->title}.md</b> {$msg} successfully");
-					    header('Location: home.php');
-					    exit();
-				   }
-				}
-				else
-				{
-			        $this->errorFile = 'has-error';
-			        throw new \Exception('Error! while uploading file');
-				}
-			}
-			else
-			{
-				if (strlen($_POST['content']) <= 10)
-				{
-					$this->errorContent = 'has-error';
-					throw new \Exception('Please enter some more content');
-				}
-				$this->content = $_POST['content'];
-
-				if (file_put_contents($fn, $_POST['content']))
-				{
-					$s->setMessage('success',
-					    "Slide <b>{$this->title}.md</b> {$msg} successfully");
-					header('Location: home.php');
-					exit();
-				}
-				else
-				{
-					$this->errorContent = 'has-error';
-					throw new \Exception('Markdown file only supported. '.
-					                     'Please upload markdown file');
-				}
-
-			}
-		}
-		catch (\Exception $e)
-		{
-			$this->errorMessage = $e->getMessage();
-		}
-
 	}
 
-	public function upload()
+	/**
+	 * Validate and filter form fields
+	 */
+	public function validate()
 	{
 		try
 		{
-			$s = new Session;
-
-			if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
+			if ($this->_isCsrf() === true)
 			{
-				$fn  = APP_PATH.'/public/media/'.$_FILES['file']['name'];
-				$allowedExts = array('jpg', 'png', 'bmp', 'gif');
-				$temp        = explode(".", $_FILES['file']["name"]);
-				$extension   = strtolower(end($temp));
-
-				if (in_array($extension, $allowedExts))
-				{
-				   	if ($_FILES['file']["error"] > 0)
-				   	{
-				        $this->errorFile = 'has-error';
-				        throw new \Exception('Error! while uploading  file');
-				   	}
-				   	else if(move_uploaded_file($_FILES["file"]["tmp_name"],$fn))
-				   	{
-					    $s->setMessage('success', "Image uploaded successfully");
-				   }
-				}
-				else
-				{
-			        $this->errorFile = 'has-error';
-			        throw new \Exception('Image upload only supported. '.
-			                             'Please choose a image file');
-				}
+				$this->error = true;
+				throw new Exception('Invalid! request');
 			}
-		}
-		catch (\Exception $e)
-		{
-			$s->setMessage('danger', $e->getMessage());
-		}
-	}
 
-	public function changeSecret()
-	{
-		$s = new Session;
-		$u = new User;
 
-		try
-		{
-			$this->user = isset($_POST['newuser']) ? $_POST['newuser'] : '';
-
-			if (isset($_POST['oldpass']) && empty($_POST['oldpass']))
+			foreach ($this->_inputField as $input => $filter)
 			{
-				$this->errorOldPass = 'has-error';
-				throw new \Exception('Please enter old password');
+				$value  = isset($_POST[$input]) ? $_POST[$input] : null;
+				$filter = Filter::factory($filter['filter']);
+
+				if ($filter->validate($value) == false)
+				{
+					$this->error              = true;
+					$this->inputError[$input] = true;
+				}
+
+				$this->inputValue[$name]       = $value;
+				$this->inputFilterValue[$name] = Filter::factory($filter)
+													->filter($value);
+			}
+
+			if ($this->error === true)
+			{
+				throw new Exception('Please fill up form correctly');
 			}
 			else
 			{
-				if (!$u->authenticatePassword($_POST['oldpass']))
-				{
-					$this->errorOldPass = 'has-error';
-					throw new \Exception('Invalid! old password');
-				}
+				return true;
 			}
-
-			if (isset($_POST['newuser']) && empty($_POST['newuser']))
-			{
-				$this->errorNewUser = 'has-error';
-				throw new \Exception('Please enter new username');
-			}
-
-			if (isset($_POST['newpass']) && empty($_POST['newpass']))
-			{
-				$this->errorNewPass = 'has-error';
-				throw new \Exception('Please enter new password');
-			}
-
-			$secret = $_POST['newuser'].'::||::'.$_POST['newpass'];
-			$u->changeSecret($secret);
-
-			$s->setMessage('success', 'Password changed successfully');
-			header('Location: home.php');
-			exit;
-
 		}
-		catch (\Exception $e)
+		catch (Exception $e)
 		{
-			$this->errorMessage = $e->getMessage();
+			die($e->getMessage());
+			Session::setMessage('danger', $e->getMessage());
+			return false;
 		}
 	}
+
 
 }
