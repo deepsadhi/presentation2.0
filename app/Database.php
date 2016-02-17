@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Sqllite;
+use App\Sqlite;
 use \PDO;
 use \PDOException;
 use \RuntimeException;
@@ -42,7 +42,7 @@ class Database
      */
     public function __construct()
     {
-        $this->_db = Sqllite::getConnection();
+        $this->_db = Sqlite::getConnection();
     }
 
     /**
