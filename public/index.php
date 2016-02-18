@@ -1,63 +1,29 @@
-<!DOCTYPE html>
-<html lang="en"><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <title>Presentation2.0</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="css/vendor/bootstrap.css" media="screen">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/main.css">
-  </head>
-  <body>
+<?php
+if (PHP_SAPI == 'cli-server') {
+    // To help the built-in PHP dev server, check if the request was actually for
+    // something which should probably be served as a static file
+    $file = __DIR__ . $_SERVER['REQUEST_URI'];
+    if (is_file($file)) {
+        return false;
+    }
+}
 
-    <div class="container">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            <span class="label label-danger pull-right" id="broadcast">Live</span>
-            <a href="javascript:window.location.reload()" class="btn btn-primary btn-xs pull-right" id="reconnect">Reconnect</a>
-          </div>
-        </div>
-      </div>
+require __DIR__ . '/../vendor/autoload.php';
 
-      <div class="continer-fluid">
-        <div class="row">
-          <div class="col-lg-12" id="container">
-          </div>
-        </div>
-      </div>
-    </div>
+session_start();
 
+// Instantiate the app
+$settings = require __DIR__ . '/../config/app.php';
+$app = new \Slim\App($settings);
 
-    <script src="js/vendor/jquery-1.js"></script>
-    <script type="text/javascript">
-      (function(){
-        $("#reconnect").hide();
+// Set up dependencies
+require __DIR__ . '/../app/dependencies.php';
 
-        var conn = new WebSocket('ws://'+location.hostname+':8080');
+// Register middleware
+require __DIR__ . '/../app/middleware.php';
 
-        conn.onopen = function(e) {
-            $("#broadcast").removeClass("label-default");
-            $("#broadcast").addClass("label-danger");
-            $("#broadcast").text("Live");
-            $("#reconnect").hide();
-        };
+// Register routes
+require __DIR__ . '/../app/routes.php';
 
-        conn.onmessage = function(e) {
-          msg = JSON.parse(e.data);
-          $("#container").html(msg.slide);
-        };
-
-        conn.onclose = function(e) {
-            $("#broadcast").removeClass("label-danger");
-            $("#broadcast").addClass("label-default");
-            $("#broadcast").text("Off-line");
-            $("#reconnect").show();
-        };
-
-      })();
-  	</script>
-
-
-<?php require 'admin/footer.php'; ?>
+// Run app
+$app->run();
