@@ -2,7 +2,6 @@
     "require": {
         "erusev/parsedown": "1.6.0",
         "cboden/ratchet": "0.3.4",
-        "filp/whoops": "2.0.0",
         "ircmaxell/filterus": "1.0.x-dev",
         "slim/slim-skeleton": "3.0.1",
         "slim/twig-view": "2.0.0"
