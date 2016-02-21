@@ -3,12 +3,6 @@
 
 $container = $app->getContainer();
 
-// // view renderer
-// $container['renderer'] = function ($c) {
-//     $settings = $c->get('settings')['renderer'];
-//     return new Slim\Views\PhpRenderer($settings['template_path']);
-// };
-
 // Register component on container
 $container['view'] = function ($container) {
     $settings = $container->get('settings')['renderer'];
