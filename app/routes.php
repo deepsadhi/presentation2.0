@@ -13,3 +13,4 @@ $app->get('/admin', function ($request, $response)
 {
 	return $this->view->render($response, 'login.twig');
 });
+

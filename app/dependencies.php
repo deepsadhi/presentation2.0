@@ -17,7 +17,6 @@ $container['view'] = function ($container) {
     return $view;
 };
 
-// monolog
 // $container['logger'] = function ($c) {
 //     $settings = $c->get('settings')['logger'];
 //     $logger = new Monolog\Logger($settings['name']);
