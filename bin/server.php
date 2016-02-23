@@ -8,6 +8,7 @@ use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use App\Websocket;
 
+// Run Web Socket server
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
