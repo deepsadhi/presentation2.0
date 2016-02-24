@@ -9,6 +9,11 @@ return [
             'cache_path   ' => __DIR__ . '/../cache/',
         ],
 
+        // Theme settings
+        'theme' => [
+            'default' => 'bootswatch/paper',
+        ],
+
         // Monolog settings
         'logger' => [
             'name' => 'slim-app',
