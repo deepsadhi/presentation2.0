@@ -37,3 +37,15 @@ body > .container {
 code {
   font-size: 80%;
 }
+
+
+
+
+
+
+
+.vcenter {
+    float:none;
+    display:inline-block;
+    vertical-align:middle;
+}
