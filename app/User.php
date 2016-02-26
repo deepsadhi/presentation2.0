@@ -80,28 +80,6 @@ class User
 		}
 	}
 
-	public function changePssword($password)
-	{
-		$p = new Password;
-
-		$p->write($password);
-	}
-
-	public function changeSecret($secret)
-	{
-		$p = new Password;
-
-		$p->write($secret);
-	}
-
-	public function getUsername()
-	{
-		$p      = new Password;
-		$secret = trim($p->read());
-		$secret = explode('::||::', $secret);
-
-		return $secret[0];
-	}
 }
 
 
