@@ -1,4 +1,3 @@
-
 <?php
 // Routes
 
@@ -10,21 +9,34 @@
 //     return $this->renderer->render($response, 'index.phtml', $args);
 // });
 
+$app->get('/login', function ($request, $response) {
+	return $this->view->render($response, 'login.twig', [
+		'csrf_name'  => $request->getAttribute('csrf_name'),
+		'csrf_value' => $request->getAttribute('csrf_value'),
+	]);
+})->add(new \Slim\Csrf\Guard)->setName('login');
+
+$app->post('/auth', function ($request, $response) {
+	$user = new \App\User;
+	$username = $request->getParsedBody()['username'];
+	$password = $request->getParsedBody()['password'];
+	return $username.$password;
+})->setName('auth');
+
 $app->group('/admin', function () {
 	$this->get('/', function ($request, $response) {
-		return $this->view->render($response, 'login.twig', [
-			'csrf_name'  => $request->getAttribute('csrf_name'),
-			'csrf_value' => $request->getAttribute('csrf_value'),
-		]);
+
 	})->setName('admin');
-
-	$this->post('/', function ($request, $response) {
-
-	});
+})->add(function ($request, $response, $next) {
+    $response->getBody()->write('It is now ');
+    $response = $next($request, $response);
+    $response->getBody()->write('. Enjoy!');
+    $response = $response->withRedirect('/admin/');
+    return $response;
 });
 
 $app->get('/', function ($request, $response) {
 	return $this->view->render($response, 'index.twig');
-});
+})->setName('home');
 
 
