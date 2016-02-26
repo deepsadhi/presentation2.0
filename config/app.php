@@ -6,7 +6,7 @@ return [
         // Renderer settings
         'renderer' => [
             'template_path' => __DIR__ . '/../templates/',
-            'cache_path   ' => __DIR__ . '/../cache/',
+            'cache_path'    => __DIR__ . '/../cache/',
         ],
 
         // Theme settings
