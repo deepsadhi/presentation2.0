@@ -31,7 +31,11 @@ class Sqlite
     private function __construct(){
         try
         {
-            self::$_db = new PDO('sqlite:'.SQLITE_FILE);
+            $settings = require __DIR__ . '/../config/app.php';
+            $file     = __DIR__ . '/../config/' .
+                        $settings['settings']['sqlite']['filename'];
+
+            self::$_db = new PDO('sqlite:' . $file);
             self::$_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
 
