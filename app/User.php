@@ -11,14 +11,14 @@ class User
 	 * Database connection
 	 * @var PDO object
 	 */
-	private $_db;
+	private static $_db;
 
 	/**
 	 * Create database connection
 	 */
 	public function __construct()
 	{
-		$this->_db = new Database;
+		self::$_db = new Database;
 	}
 
 	/**
@@ -29,7 +29,7 @@ class User
 	 *
 	 * @return bool                    Both password match or not
 	 */
-	private function _verifyPassword($actualPassword, $enterdPassword)
+	private static function _verifyPassword($actualPassword, $enterdPassword)
 	{
 		if ($actualPassword == $enterdPassword)
 		{
@@ -42,20 +42,29 @@ class User
 	}
 
 
-	public function authenticate($username, $password)
+	/**
+	 * Check entered username and password is valid or not
+	 * Fetch username and password from database
+	 * Register if authentication is valid
+	 *
+	 * @param  string $username Entered username
+	 * @param  string $password Entered password
+	 * @return bool             Authentication was valid or not
+	 */
+	public static function login($username, $password)
 	{
 		$data = array('type'  => 'STR',
 		              'key'   => 'username',
 		              'value' => $username);
 
-		if ($this->_db->getValueOf('users', $data))
+		if (self::$_db->getValueOf('users', $data))
 		{
-			if ($this->_db->rowCount > 0)
+			if (self::$_db->rowCount > 0)
 			{
-				$actualPassword = $this->_db->result['password'];
-				if ($this->_verifyPassword($actualPassword, $password) === true)
+				$actualPassword = self::$_db->result['password'];
+				if (self::_verifyPassword($actualPassword, $password) === true)
 				{
-					Session::setUserId($this->_db->result['id']);
+					$_SESSION['user'] = $username;
 					return true;
 				}
 			}
@@ -64,19 +73,31 @@ class User
 		return false;
 	}
 
-	public function authenticatePassword($password)
+	/**
+	 * Destroy session of user
+	 */
+	public static function logout()
 	{
-		$p      = new Password;
-		$secret = trim($p->read());
-		$secret = explode('::||::', $secret);
+		session_destroy();
+		unset($_SESSION);
+		session_regenerate_id(true);
+	}
 
-		if ($password == $secret[1])
+
+	/**
+	 * Check user is logged in or not
+	 *
+	 * @return bool User session existed or not
+	 */
+	public static function authenticate()
+	{
+		if (!isset($_SESSION['user']))
 		{
-			return true;
+			return false;
 		}
 		else
 		{
-			return false;
+			return true;
 		}
 	}
 
