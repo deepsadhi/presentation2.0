@@ -24,7 +24,7 @@ $app->post('/login', function ($request, $response) {
 
 	if (User::login($username, $password) === true)
 	{
-		return $response->withRedirect('admin/');
+		return $response->withRedirect('/admin/');
 	}
 	else
 	{
@@ -41,22 +41,40 @@ $app->post('/login', function ($request, $response) {
 $app->group('/admin', function () use ($app) {
 	// List of presentation files
 	$this->get('/', function ($request, $response) use ($app) {
-		$path  = $app->getContainer()->get('settings')['presentation']['files'];
+		$path  = $app->getContainer()->get('settings')['presentation']['markdown'];
 		$file  = new File($path, 'md|markdown');
 		$file->ls();
 
-		return $this->view->render($response, 'home.twig', [
+		$data = [
 		    'files'      => $file->files,
-		    'error' 	 => $file->error,
+		    'error' 	 => $file->flash,
 		    'csrf_name'  => $request->getAttribute('csrf_name'),
 		    'csrf_value' => $request->getAttribute('csrf_value'),
 		    'activePage' => 'home',
-        ]);
+        ];
+
+		if ($this->flash->getMessages())
+		{
+			$data['flash']            = [];
+			$data['flash']['error']   = $this->flash->getMessages()['error'][0];
+			$data['flash']['message'] = $this->flash->getMessages()['message'][0];
+		}
+
+		return $this->view->render($response, 'home.twig', $data);
 	})->setName('admin')->add(new Guard);
 
-	$this->delete('/file/{filename}', function($request, $response, $args) {
-		var_dump($args);
-	});
+	$this->delete('/file', function($request, $response) use ($app) {
+		$path     = $request->getParsedBody()['path'];
+		$realPath = $app->getContainer()->get('settings')['presentation'][$path];
+		$filePath = $realPath . $request->getParsedBody()['file'];
+
+		$file = new File($filePath);
+		$file->delete();
+
+		$this->flash->addMessage('error', $file->flash['error']);
+		$this->flash->addMessage('message', $file->flash['message']);
+		return $response->withRedirect('/admin/');
+	})->setName('file');
 })->add(function ($request, $response, $next) {
 	if (User::authenticate() === false)
 	{
