@@ -1,15 +1,22 @@
 <?php
 // DIC configuration
 
+use Slim\Flash\Messages;
+use Slim\Views\Twig;
+use Slim\Views\TwigExtension;
+
 $container = $app->getContainer();
 
 // Register component on container
 $container['view'] = function ($container) {
     $settings = $container->get('settings')['renderer'];
-    $view = new \Slim\Views\Twig($settings['template_path'], [
-        // 'cache' => $settings['cache_path']
-    ]);
-    $view->addExtension(new \Slim\Views\TwigExtension(
+    $view = new Twig(
+        $settings['template_path'],
+        [
+        	// 'cache' => $settings['cache_path']
+        ]
+    );
+    $view->addExtension(new TwigExtension(
         $container['router'],
         $container['request']->getUri()
     ));
@@ -17,10 +24,7 @@ $container['view'] = function ($container) {
     return $view;
 };
 
-// $container['logger'] = function ($c) {
-//     $settings = $c->get('settings')['logger'];
-//     $logger = new Monolog\Logger($settings['name']);
-//     $logger->pushProcessor(new Monolog\Processor\UidProcessor());
-//     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], Monolog\Logger::DEBUG));
-//     return $logger;
-// };
+// Register flash message on container
+$container['flash'] = function () {
+	return new Messages();
+};
