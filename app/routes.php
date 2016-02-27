@@ -1,30 +1,30 @@
 <?php
-// Routes
 
-// $app->get('/[{name}]', function ($request, $response, $args) {
-//     // Sample log message
-//     $this->logger->info("Slim-Skeleton '/' route");
+use App\User;
+use App\File;
+use Slim\Csrf\Guard;
 
-//     // Render index view
-//     return $this->renderer->render($response, 'index.phtml', $args);
-// });
+// Home page for viewers
+$app->get('/', function ($request, $response) {
+	return $this->view->render($response, 'index.twig');
+})->setName('home');
 
+// Login page
 $app->get('/login', function ($request, $response) {
 	return $this->view->render($response, 'login.twig', [
 		'csrf_name'  => $request->getAttribute('csrf_name'),
 		'csrf_value' => $request->getAttribute('csrf_value'),
 	]);
-})->add(new \Slim\Csrf\Guard)->setName('login');
+})->add(new Guard)->setName('login');
 
+// Login authentication
 $app->post('/login', function ($request, $response) {
-	$user     = new \App\User;
 	$username = $request->getParsedBody()['username'];
 	$password = $request->getParsedBody()['password'];
 
-	if ($user->authenticate($username, $password) === true)
+	if (User::login($username, $password) === true)
 	{
-		$_SESSION['user'] = $username;
-		$response->withRedirect('admin');
+		return $response->withRedirect('admin/');
 	}
 	else
 	{
@@ -35,24 +35,41 @@ $app->post('/login', function ($request, $response) {
 			'csrf_value' => $request->getAttribute('csrf_value'),
 		]);
 	}
-
-})->setName('auth');
-
-$app->group('/admin', function () {
-	$this->get('/', function ($request, $response) {
-
-	})->setName('admin');
 });
-// ->add(function ($request, $response, $next) {
-//     $response->getBody()->write('It is now ');
-//     $response = $next($request, $response);
-//     $response->getBody()->write('. Enjoy!');
-//     $response = $response->withRedirect('/admin/');
-//     return $response;
-// });
 
-$app->get('/', function ($request, $response) {
-	return $this->view->render($response, 'index.twig');
-})->setName('home');
+// Admin pages for presenter
+$app->group('/admin', function () use ($app) {
+	// List of presentation files
+	$this->get('/', function ($request, $response) use ($app) {
+		$path  = $app->getContainer()->get('settings')['presentation']['files'];
+		$file  = new File($path, 'md|markdown');
+		$file->ls();
+
+		return $this->view->render($response, 'home.twig', [
+		    'files'      => $file->files,
+		    'error' 	 => $file->error,
+		    'csrf_name'  => $request->getAttribute('csrf_name'),
+		    'csrf_value' => $request->getAttribute('csrf_value'),
+		    'activePage' => 'home',
+        ]);
+	})->setName('admin')->add(new Guard);
+
+	$this->delete('/file/{filename}', function($request, $response, $args) {
+		var_dump($args);
+	});
+})->add(function ($request, $response, $next) {
+	if (User::authenticate() === false)
+	{
+		$response = $response->withRedirect('/login');
+	}
+    $response = $next($request, $response);
+
+	return $response;
+});
 
 
+// Logout page
+$app->get('/logout', function($request, $response) {
+	User::logout();
+	return $response->withRedirect('login');
+})->setName('logout');
