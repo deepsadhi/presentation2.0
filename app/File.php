@@ -6,42 +6,91 @@ use App\Session;
 
 class File
 {
+	/**
+	 * Store path of file or directory
+	 *
+	 * @var string
+	 */
 	private $_path;
 
-	public function __construct($path)
+	/**
+	 * Store extensions of files to be listed
+	 *
+	 * @var array
+	 */
+	private $_extensions;
+
+	/**
+	 * Store list of files in path
+	 *
+	 * @var array
+	 */
+
+	public $files = [];
+	/**
+	 * Store error messages
+	 *
+	 * @var array
+	 */
+	public $error = [];
+
+	/**
+	 * Set path of file or directory
+	 *
+	 * @param string $path       Path of file or directory
+	 * @param array  $extensions Supported file type extensions
+	 */
+	public function __construct($path, $extensions)
 	{
-		$this->_path = $path;
+		$this->_path            = $path;
+		$this->_extensions      = $extensions;
+		$this->error['error']   = false;
+		$this->error['message'] = '';
 	}
 
-	public function lists($ext)
-	{
-		$files = array();
-		$dir   = opendir($this->_path);
 
-		if ($dir)
+	/**
+	 * List directory contents of the path
+	 *
+	 * @return array List of all files of the path
+	 */
+	public function ls()
+	{
+		$files     = [];
+		$directory = opendir($this->_path);
+
+		if ($directory)
 		{
-			while (false !== ($filename = readdir($dir)))
+			while (false !== ($filename = readdir($directory)))
 			{
-				if((preg_match('/^[a-zA-Z0-9_]*.'.$ext.'$/i',$filename) == true))
+				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->_extensions.'$/i',
+				               $filename) == true))
 				{
-					$fn = $this->_path.'/'.$filename;
+					$fn      = $this->_path . '/' . $filename;
 					$files[] = ['name' => $filename,
 								'size' => $this->_formatSize(filesize($fn)),
 								'date' => date("M d, Y h:i A", filemtime($fn))
 							   ];
 				}
 			}
-
-			return $files;
 		}
 		else
 		{
-			$s = new Session;
-			$s->setMessage('warning', "Cannot read <b>{$this->_path}</b>. ".
-			               			  'Give execute permission');
+			$this->error['error']   = true;
+			$this->error['message'] = 'Directory "'.$this->_path.'" cannot be '.
+									  'accessed. Please give execute '.
+									  'permission.';
 		}
+
+		$this->files = $files;
 	}
 
+	/**
+	 * Format bytes to human readable file size
+	 *
+	 * @param  int    $bytes File size
+	 * @return string        File size in human readable
+	 */
     private function _formatSize($bytes)
     {
         if ($bytes >= 1073741824)
@@ -71,8 +120,5 @@ class File
 
         return $bytes;
 	}
-
-
-
 
 }
