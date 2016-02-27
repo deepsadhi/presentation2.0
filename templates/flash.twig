@@ -1,0 +1,15 @@
+      {% if error.error == true %}
+      <div class="row">
+        <div class="alert alert-warning">
+          <p>{{ error.message }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if flash.message %}
+      <div class="row">
+        <div class="alert alert-{{ flash.error == true ? 'warning' : 'success' }}">
+          <p>{{ flash.message }}</p>
+        </div>
+      </div>
+      {% endif %}
