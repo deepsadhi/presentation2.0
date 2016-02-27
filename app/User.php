@@ -16,7 +16,7 @@ class User
 	/**
 	 * Create database connection
 	 */
-	public function __construct()
+	public static function connectDb()
 	{
 		self::$_db = new Database;
 	}
@@ -53,6 +53,8 @@ class User
 	 */
 	public static function login($username, $password)
 	{
+		self::connectDb();
+
 		$data = array('type'  => 'STR',
 		              'key'   => 'username',
 		              'value' => $username);
