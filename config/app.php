@@ -20,8 +20,8 @@ return [
         ],
 
         'presentation' => [
-            'files'  => __DIR__ . '/../markdown/',
-            'medias' => PUBLIC_PATH . '/media/',
+            'media'     => PUBLIC_PATH . '/media/',
+            'markdown'  => __DIR__ . '/../markdown/',
         ],
 
     ],
