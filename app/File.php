@@ -2,8 +2,6 @@
 
 namespace App;
 
-use App\Session;
-
 class File
 {
 	/**
@@ -28,11 +26,11 @@ class File
 
 	public $files = [];
 	/**
-	 * Store error messages
+	 * Store error and success messages
 	 *
 	 * @var array
 	 */
-	public $error = [];
+	public $flash = [];
 
 	/**
 	 * Set path of file or directory
@@ -40,12 +38,12 @@ class File
 	 * @param string $path       Path of file or directory
 	 * @param array  $extensions Supported file type extensions
 	 */
-	public function __construct($path, $extensions)
+	public function __construct($path, $extensions='')
 	{
 		$this->_path            = $path;
 		$this->_extensions      = $extensions;
-		$this->error['error']   = false;
-		$this->error['message'] = '';
+		$this->flash['error']   = false;
+		$this->flash['message'] = '';
 	}
 
 
@@ -76,10 +74,10 @@ class File
 		}
 		else
 		{
-			$this->error['error']   = true;
-			$this->error['message'] = 'Directory "'.$this->_path.'" cannot be '.
-									  'accessed. Please give execute '.
-									  'permission.';
+			$this->flash['error']   = true;
+			$this->flash['message'] = 'Directory "'.realpath($this->_path).
+									  '" cannot be accessed. Please give '.
+									  'execute permission.';
 		}
 
 		$this->files = $files;
@@ -119,6 +117,27 @@ class File
         }
 
         return $bytes;
+	}
+
+	public function delete()
+	{
+		$filename = explode('/', $this->_path);
+		$filename = end($filename);
+
+		if (file_exists($this->_path))
+		{
+			if (unlink($this->_path))
+			{
+				$this->flash['error']   = false;
+				$this->flash['message'] = 'File '.$filename.' deleted successfully.';
+				return true;
+			}
+		}
+
+		$this->flash['error']   = true;
+		$this->flash['message'] = 'Error! while deleting file "'.$filename.'". '.
+								  'Check file and directory permissions.';
+		return false;
 	}
 
 }
