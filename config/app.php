@@ -14,15 +14,14 @@ return [
             'default' => 'bootswatch/paper',
         ],
 
-        // Monolog settings
-        // 'logger' => [
-        //     'name' => 'slim-app',
-        //     'path' => __DIR__ . '/../logs/app.log',
-        // ],
-
         // Sqlite database to store credentials
         'sqlite' => [
             'filename' => 'app.db',
+        ],
+
+        'presentation' => [
+            'files'  => __DIR__ . '/../markdown/',
+            'medias' => PUBLIC_PATH . '/media/',
         ],
 
     ],
