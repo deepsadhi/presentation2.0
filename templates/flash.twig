@@ -1,7 +1,15 @@
       {% if error.error == true %}
       <div class="row">
-        <div class="alert alert-warning">
+        <div class="alert alert-danger">
           <p>{{ error.message }}</p>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if message  %}
+      <div class="row">
+        <div class="alert alert-info">
+          <p>{{ message }}</p>
         </div>
       </div>
       {% endif %}
