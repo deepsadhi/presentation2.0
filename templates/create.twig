@@ -1,0 +1,51 @@
+{% extends "layout.twig" %}
+
+{% block navbar %}
+{% include "navbar.twig" %}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Begin page content -->
+    <div class="container">
+        <div class="col-lg-10 col-md-offset-1">
+          {% include "flash.twig" %}
+          <div class="row">
+            <form class="form-horizontal" action="{{ path_for('create') }}" method="POST" enctype="multipart/form-data">
+              <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
+              <fieldset>
+                <div class="{{ error.input == 'title' ? 'has-error' : '' }}">
+                  <label class="control-label">Presentation title</label>
+                  <div class="">
+                    <input type="text" name="title" value="{{ input.title ?? '' }}" class="form-control">
+                  </div>
+                </div>
+                <div class="{{ error.input == 'file' ? 'has-error' : '' }}">
+                  <label class="control-label">Markdown file</label>
+                  <div class="">
+                    <input type="file" name="file">
+                  </div>
+                </div>
+                <div>
+                  <label>OR</label>
+                </div>
+                <div class="{{ error.input == 'content' ? 'has-error' : '' }}">
+                  <label class="control-label">Enter presentation contents in Markdown syntax</label>
+                  <div class="">
+                    <textarea class="form-control" name="content" rows="5">{{ input.content ?? '' }}</textarea>
+                  </div>
+                </div>
+                <div class="">
+                  <label></label>
+                  <div>
+                    <button class="btn btn-primary" type="submit">Create</button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+    </div> <!-- /container -->
+
+
+{% endblock %}
