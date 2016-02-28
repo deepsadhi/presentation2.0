@@ -2,115 +2,81 @@
 
 namespace App;
 
-use App\Session;
 use \Exception;
-use Filterus\Filter;
 
 class Form
 {
-	private $_inputField     = array();
+	public $flash = [];
 
-	public $tokenName;
-	public $tokenValue;
-
-	public $error            = false;
-	public $inputName        = array();
-	public $inputError       = array();
-	public $inputValue       = array();
-	public $inputFilterValue = array();
+	public $input = [];
 
 
-	/**
-	 * Initialize form fields
-	 *
-	 * @param string $type Type of form
-	 */
-	public function __construct($type)
+	public function createOrUpdate($input, $file, $path, $edit = false)
 	{
-		$this->tokenName  = '_token';
-		$this->tokenValue = Session::getCsrfToken();
+		$this->input['title']    = trim($input['title']);
+		$this->input['title']    = preg_replace('/[^a-z0-9._-]/i', '', $this->input['title']);
+		$this->input['content']  = trim($input['content']);
+		$fileName = $this->input['title'].'.md';
 
-		switch ($type)
-		{
-			case 'login':
-			{
-				$this->_inputField['username'] = array(
-				                               'filter' => 'alnum,min:3,max:10)'
-				                               );
-				$this->_inputField['password'] = array(
-				                               'filter' => 'raw,min:6,max:20'
-				                               );
-				break;
- 			}
+		$msg = !$edit ? 'created' : 'updated';
 
-			default:
-			{
-			}
-		}
-	}
-
-	/**
-	 * Check Cross Site Request Forgery
-	 *
-	 * @return bool Request is valid or not
-	 */
-	private function _isCsrf()
-	{
-		if (isset($_POST[$this->tokenName]) &&
-		    $_POST[$this->tokenName] == $this->tokenValue
-		   )
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	/**
-	 * Validate and filter form fields
-	 */
-	public function validate()
-	{
 		try
 		{
-			if ($this->_isCsrf() === true)
+			if (empty($this->input['title']))
 			{
-				$this->error = true;
-				throw new Exception('Invalid! request');
+				$this->flash['input'] = 'title';
+				throw new Exception('Please enter title of presentation.');
 			}
 
-
-			foreach ($this->_inputField as $input => $filter)
+			if (!$edit)
 			{
-				$value  = isset($_POST[$input]) ? $_POST[$input] : null;
-				$filter = Filter::factory($filter['filter']);
-
-				if ($filter->validate($value) == false)
+				if (file_exists($path.$fileName))
 				{
-					$this->error              = true;
-					$this->inputError[$input] = true;
+					$this->flash['input'] = 'title';
+					throw new Exception('Presentation title with filename already exists.');
 				}
-
-				$this->inputValue[$name]       = $value;
-				$this->inputFilterValue[$name] = Filter::factory($filter)
-													->filter($value);
 			}
 
-			if ($this->error === true)
+			if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
 			{
-				throw new Exception('Please fill up form correctly');
+				if ($file->getError() === UPLOAD_ERR_OK)
+				{
+				    $file->moveTo($path.$fileName);
+					$this->flash['error']   = false;
+					$this->flash['message'] = 'Presentation '.$msg.' successfully.';
+					return true;
+				}
+				else
+				{
+					$this->flash['input'] = 'file';
+					throw new Exception('Error! while uploading file.');
+				}
 			}
 			else
 			{
-				return true;
+				if (empty($this->input['content']))
+				{
+					$this->flash['input'] = 'content';
+					throw new Exception('Please enter some presentation contents.');
+				}
+
+				if (file_put_contents($path.$fileName, $this->input['content']) == true)
+				{
+					$this->flash['error']   = false;
+   				    $this->flash['message'] = 'Presentation '.$msg.' successfully.';
+					return true;
+				}
+				else
+				{
+					$this->flash['input'] = 'content';
+					throw new Exception('Error! while writing contents to file.');
+				}
 			}
 		}
 		catch (Exception $e)
 		{
-			die($e->getMessage());
-			Session::setMessage('danger', $e->getMessage());
+			$this->flash['error']   = true;
+			$this->flash['message'] = $e->getMessage();
 			return false;
 		}
 	}
