@@ -32,6 +32,8 @@ class File
 	 */
 	public $flash = [];
 
+	public $contents;
+
 	/**
 	 * Set path of file or directory
 	 *
@@ -64,8 +66,13 @@ class File
 				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->_extensions.'$/i',
 				               $filename) == true))
 				{
+				    if (substr($filename, -3, 3) == '.md')
+				    {
+				    	$fileNameWithoutExt= substr($filename, 0, -3);
+				    }
+
 					$fn      = $this->_path . '/' . $filename;
-					$files[] = ['name' => $filename,
+					$files[] = ['name' => $fileNameWithoutExt,
 								'size' => $this->_formatSize(filesize($fn)),
 								'date' => date("M d, Y h:i A", filemtime($fn))
 							   ];
@@ -140,4 +147,22 @@ class File
 		return false;
 	}
 
+	public function load()
+	{
+		if (file_exists($this->path))
+		{
+			$this->contents = file_get_contents($this->path);
+			$this->flash['error'] = 'false';
+			return true;
+		}
+		else
+		{
+			$fileName = explode('/', $this->_path);
+			$fileName = end($fileName);
+
+			$this->flash['error'] = true;
+			$this->flash['message'] = 'Error! loading file '.$fileName.'.';
+			return false;
+		}
+	}
 }
