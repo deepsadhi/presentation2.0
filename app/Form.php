@@ -10,11 +10,10 @@ class Form
 
 	public $input = [];
 
-
 	public function createOrUpdate($input, $file, $path, $edit = false)
 	{
 		$this->input['title']    = trim($input['title']);
-		$this->input['title']    = preg_replace('/[^a-z0-9._-]/i', '', $this->input['title']);
+		$this->input['title']    = preg_replace('/[^a-z0-9_]/i', '', $this->input['title']);
 		$this->input['content']  = trim($input['content']);
 		$fileName = $this->input['title'].'.md';
 
@@ -77,6 +76,58 @@ class Form
 		{
 			$this->flash['error']   = true;
 			$this->flash['message'] = $e->getMessage();
+			return false;
+		}
+	}
+
+	private function _trimWhiteSpace(Array $input)
+	{
+		foreach ($input as $key => $value)
+		{
+			$input[$key] = trim($value);
+		}
+		return $input;
+	}
+
+	public function updateUserPass(Array $input)
+	{
+		$this->input['value'] = $this->_trimWhiteSpace($input);
+
+		try
+		{
+			if (empty($this->input['value']['old_password']))
+			{
+				$this->input['invalid']['old_password'] = true;
+				throw new Exception('Please enter your old password.');
+			}
+
+			if (strlen($this->input['new_username']) < 3 &&
+			    strlen($this->input['new_username']) > 12)
+			{
+				$this->input['invalid']['new_username'] = true;
+				throw new Exception('Username should of length between 3-12');
+			}
+
+			if (preg_replace('/[^a-z0-9_.]/i', '', $this->input['new_username'])
+			    != $this->input['new_username'])
+			{
+				$this->input['invalid']['new_username'] = true;
+				throw new Exception('Username support only alpha numeric character with . and _');
+			}
+
+			if (strlen($this->input['new_password']) < 6 &&
+			    strlen($this->input['new_password']) > 12)
+			{
+				$this->input['invalid']['new_password'] = true;
+				throw new Exception('Password should of length between 6-12');
+			}
+
+
+		}
+		catch (Exception $e)
+		{
+			$this->input['error']   = true;
+			$this->input['message'] = $e->getMessage();
 			return false;
 		}
 	}

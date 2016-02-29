@@ -66,13 +66,8 @@ class File
 				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->_extensions.'$/i',
 				               $filename) == true))
 				{
-				    if (substr($filename, -3, 3) == '.md')
-				    {
-				    	$fileNameWithoutExt= substr($filename, 0, -3);
-				    }
-
 					$fn      = $this->_path . '/' . $filename;
-					$files[] = ['name' => $fileNameWithoutExt,
+					$files[] = ['name' => $filename,
 								'size' => $this->_formatSize(filesize($fn)),
 								'date' => date("M d, Y h:i A", filemtime($fn))
 							   ];
@@ -102,19 +97,19 @@ class File
         {
             $bytes = number_format($bytes / 1073741824, 2) . ' GB';
         }
-        elseif ($bytes >= 1048576)
+        else if ($bytes >= 1048576)
         {
             $bytes = number_format($bytes / 1048576, 2) . ' MB';
         }
-        elseif ($bytes >= 1024)
+        else if ($bytes >= 1024)
         {
             $bytes = number_format($bytes / 1024, 2) . ' KB';
         }
-        elseif ($bytes > 1)
+        else if ($bytes > 1)
         {
             $bytes = $bytes . ' bytes';
         }
-        elseif ($bytes == 1)
+        else if ($bytes == 1)
         {
             $bytes = $bytes . ' byte';
         }

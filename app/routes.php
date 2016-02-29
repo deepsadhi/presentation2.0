@@ -61,7 +61,7 @@ $app->group('/admin', function () use ($app) {
 			$data['flash']['message'] = $this->flash->getMessages()['message'][0];
 		}
 
-		return $this->view->render($response, 'index.twig', $data);
+		return $this->view->render($response, 'admin.twig', $data);
 	})->setName('admin')->add(new Guard);
 
 	// List of media file for presentations
@@ -85,7 +85,7 @@ $app->group('/admin', function () use ($app) {
 			$data['flash']['message'] = $this->flash->getMessages()['message'][0];
 		}
 
-		return $this->view->render($response, 'index.twig', $data);
+		return $this->view->render($response, 'media.twig', $data);
 	})->setName('media')->add(new Guard);
 
 	// Form to to create presentation file
@@ -171,6 +171,38 @@ $app->group('/admin', function () use ($app) {
 			return $response->withRedirect('/admin/media');
 		}
 	})->setName('file');
+
+	$this->get('/settings', function($request, $response) {
+		return $this->view->render($response, 'settings.twig', [
+			'input'      => ['value' => ['new_username' => User::getUserName()]],
+			'message'    => 'Enter details.',
+			'csrf_name'  => $request->getAttribute('csrf_name'),
+			'csrf_value' => $request->getAttribute('csrf_value'),
+			'activePage' => 'settings',
+		]);
+	})->setName('settings')->add(new Guard);
+
+	$this->put('/settings', function ($request, $response) {
+		$input = $request->getParsedBody();
+		$form = new Form;
+
+		if ($form->updateUserPass($input) == true)
+		{
+			$this->flash->addMessage('error', $form->flash['error']);
+			$this->flash->addMessage('message', $form->flash['message']);
+
+			return $response->withRedirect('/admin/');
+		}
+		else
+		{
+			return $this->view->render($response, 'settings.twig', [
+				'input' 	 => $form->input,
+				'csrf_name'  => $request->getAttribute('csrf_name'),
+				'csrf_value' => $request->getAttribute('csrf_value'),
+				'activePage' => 'settings',
+			]);
+		}
+	});
 })->add(function ($request, $response, $next) {
 	if (User::authenticate() === false)
 	{

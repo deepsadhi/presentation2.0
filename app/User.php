@@ -103,6 +103,11 @@ class User
 		}
 	}
 
+	public static function getUserName()
+	{
+		return (isset($_SESSION['user'])) ? $_SESSION['user'] : null;
+	}
+
 }
 
 
