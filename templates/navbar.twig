@@ -11,7 +11,7 @@
             <li class="{{ activePage == 'media' ? 'active' : '' }}"><a href="{{ path_for('media') }}">Media</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="{{ activePage == 'settings' ? 'active' : '' }}"><a href="#">Settings</a></li>
+            <li class="{{ activePage == 'settings' ? 'active' : '' }}"><a href="{{ path_for('settings') }}">Settings</a></li>
             <li><a href="{{ path_for('logout') }}">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
