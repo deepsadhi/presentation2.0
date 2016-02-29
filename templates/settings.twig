@@ -1,0 +1,49 @@
+{% extends "layout.twig" %}
+
+{% block navbar %}
+{% include "navbar.twig" %}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Begin page content -->
+    <div class="container">
+        <div class="col-lg-6 col-md-offset-3">
+          {% include "flash.twig" %}
+          <div class="row">
+            <form class="form-horizontal" action="{{ path_for('settings') }}" method="POST">
+              <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
+              <input type="hidden" value="PUT" name="_METHOD">
+              <fieldset>
+                <div class="{{ form.invalid == 'old_password' ? 'has-error' : '' }}">
+                  <label class="control-label">Old password</label>
+                  <div class="">
+                    <input type="password" {{ input.invalid.old_password ? 'autofocus' : '' }} name="old_password" class="form-control" >
+                  </div>
+                </div>
+                <div class="{{ form.invalid == 'new_username' ? 'has-error' : '' }}">
+                  <label class="control-label">New username</label>
+                  <div class="">
+                    <input type="text" {{ input.invalid.new_username ? 'autofocus' : '' }} value="{{ input.value.new_username ?? '' }}" name="new_username" class="form-control">
+                  </div>
+                </div>
+                <div class="{{ form.invalid == 'new_password' ? 'has-error' : '' }}">
+                  <label class="control-label">New password</label>
+                  <div class="">
+                    <input type="password" {{ input.invalid.new_password ? 'autofocus' : '' }} name="new_password" class="form-control" >
+                  </div>
+                </div>
+                <div class="">
+                  <label></label>
+                  <div>
+                    <button class="btn btn-primary" type="submit">Update</button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+    </div> <!-- /container -->
+
+
+{% endblock %}
