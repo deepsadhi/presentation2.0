@@ -1,0 +1,25 @@
+{% extends "layout.twig" %}
+
+{% block navbar %}
+{% include 'navbar.twig' %}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Begin page content -->
+    <div class="container">
+
+      {% include "flash.twig" %}
+
+      {% include "index.twig" %}
+
+    </div> <!-- /container -->
+
+    {% include "dialogbox.twig" %}
+
+
+{% endblock %}
+
+{% block js %}
+    <script src="/js/app.js"></script>
+{% endblock %}
