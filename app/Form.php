@@ -132,5 +132,42 @@ class Form
 		}
 	}
 
+	private function _upload($file, $fileName=null)
+	{
+		if ($fileName == null)
+		{
+			$fileName = $file->getClientFilename();
+		}
+
+		if ($file->getError() === UPLOAD_ERR_OK)
+		{
+		    $file->moveTo($path . $fileName);
+			return true;
+		}
+
+		return false;
+	}
+
+	private function _verifyFileName()
+	{
+		$i
+		do
+		{
+			if (!file_exists($this->path . $fileName))
+			{
+				return $fileName;
+			}
+
+
+	public function uploadMedia($file)
+	{
+		if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
+		{
+
+	}
+
+
+
+
 
 }
