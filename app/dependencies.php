@@ -8,18 +8,22 @@ use Slim\Views\TwigExtension;
 $container = $app->getContainer();
 
 // Register component on container
-$container['view'] = function ($container) {
+$container['view'] = function ($container) use ($app) {
     $settings = $container->get('settings')['renderer'];
     $view = new Twig(
         $settings['template_path'],
         [
         	// 'cache' => $settings['cache_path']
+            'my_name' => 'deepak'
         ]
     );
     $view->addExtension(new TwigExtension(
         $container['router'],
         $container['request']->getUri()
     ));
+
+    $theme = $app->getContainer()->get('settings')['theme']['name'];
+    $view->getEnvironment()->addGlobal('theme', $theme);
 
     return $view;
 };
