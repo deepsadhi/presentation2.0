@@ -16,7 +16,7 @@
 
       {% if flash.message %}
       <div class="row">
-        <div class="alert alert-{{ flash.error == true ? 'warning' : 'success' }}">
+        <div class="alert alert-{{ flash.alertType }}">
           <p>{{ flash.message }}</p>
         </div>
       </div>
