@@ -136,7 +136,7 @@ class Form
 	{
 		if ($fileName == null)
 		{
-			$fileName = $file->getClientFilename();
+			$fileName = $this->_getFileName($file->getClientFilename());
 		}
 
 		if ($file->getError() === UPLOAD_ERR_OK)
@@ -148,23 +148,37 @@ class Form
 		return false;
 	}
 
-	private function _verifyFileName()
+	private function _getFileName($fileName)
 	{
-		$i
-		do
+		$i           = 1;
+		$tmpFileName = $fileName;
+
+		while (1)
 		{
-			if (!file_exists($this->path . $fileName))
+			if (!(file_exists($this->path . $fileName))
 			{
 				return $fileName;
 			}
 
+			$tmpFileName = $i . $fileName;
+			$i++;
+		}
+	}
 
 	public function uploadMedia($file)
 	{
 		if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
 		{
+			if ($this->_upload($file) === true)
+			{
+				return true;
+			}
+		}
 
+		return false;
 	}
+
+}
 
 
 
