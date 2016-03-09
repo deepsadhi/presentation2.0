@@ -6,16 +6,33 @@ use \Exception;
 
 class Form
 {
-	public $flash = [];
+	public $form = [];
 
-	public $input = [];
+	protected function upload($file, $fileName=null)
+	{
+		if ($fileName === null)
+		{
+			$fileName = $this->_getFileName($file->getClientFilename());
+		}
+
+		if ($file->getError() === UPLOAD_ERR_OK)
+		{
+		    $file->moveTo($path . $fileName);
+			return true;
+		}
+
+		return false;
+	}
 
 	public function createOrUpdate($input, $file, $path, $edit = false)
 	{
-		$this->input['title']    = trim($input['title']);
-		$this->input['title']    = preg_replace('/[^a-z0-9_]/i', '', $this->input['title']);
-		$this->input['content']  = trim($input['content']);
-		$fileName = $this->input['title'].'.md';
+		$input 					   = $this->trimWhiteSpace($input);
+		$input['title']            = preg_replace('/[^a-z0-9_]/i',
+		                                          '',
+		                                          $input['title']);
+
+		$fileName                  = $this->input['title'].'.md';
+		$this->form['input_value'] = $this->input;
 
 		$msg = !$edit ? 'created' : 'updated';
 
@@ -23,7 +40,7 @@ class Form
 		{
 			if (empty($this->input['title']))
 			{
-				$this->flash['input'] = 'title';
+				$this->form['invalid_input'] = 'title';
 				throw new Exception('Please enter title of presentation.');
 			}
 
@@ -31,23 +48,22 @@ class Form
 			{
 				if (file_exists($path.$fileName))
 				{
-					$this->flash['input'] = 'title';
-					throw new Exception('Presentation title with filename already exists.');
+					$this->form['invalid_input'] = 'title';
+					throw new Exception('Presentation filename with title already exists.');
 				}
 			}
 
 			if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
 			{
-				if ($file->getError() === UPLOAD_ERR_OK)
+				if ($this->upload($this->path, $fileName) === true)
 				{
-				    $file->moveTo($path.$fileName);
 					$this->flash['error']   = false;
 					$this->flash['message'] = 'Presentation '.$msg.' successfully.';
 					return true;
 				}
 				else
 				{
-					$this->flash['input'] = 'file';
+					$this->form['invalid_input'] = 'file';
 					throw new Exception('Error! while uploading file.');
 				}
 			}
@@ -55,11 +71,12 @@ class Form
 			{
 				if (empty($this->input['content']))
 				{
-					$this->flash['input'] = 'content';
-					throw new Exception('Please enter some presentation contents.');
+					$this->form['invalid_input'] = 'content';
+					throw new Exception('Please enter presentation contents.');
 				}
 
-				if (file_put_contents($path.$fileName, $this->input['content']) == true)
+				if (file_put_contents($path.$fileName,
+				                      $this->input['content']) === true)
 				{
 					$this->flash['error']   = false;
    				    $this->flash['message'] = 'Presentation '.$msg.' successfully.';
@@ -67,7 +84,7 @@ class Form
 				}
 				else
 				{
-					$this->flash['input'] = 'content';
+					$this->form['invalid_input'] = 'content';
 					throw new Exception('Error! while writing contents to file.');
 				}
 			}
@@ -80,24 +97,26 @@ class Form
 		}
 	}
 
-	private function _trimWhiteSpace(Array $input)
+	protected function trimWhiteSpace(Array $input)
 	{
 		foreach ($input as $key => $value)
 		{
 			$input[$key] = trim($value);
 		}
+
 		return $input;
 	}
 
 	public function updateUserPass(Array $input)
 	{
-		$this->input['value'] = $this->_trimWhiteSpace($input);
+		$input                     = $this->trimWhiteSpace($input);
+		$this->form['input_value'] = $input;
 
 		try
 		{
-			if (empty($this->input['value']['old_password']))
+			if (empty($input['old_password']))
 			{
-				$this->input['invalid']['old_password'] = true;
+				$this->['invalid_input']['old_password'] = true;
 				throw new Exception('Please enter your old password.');
 			}
 
@@ -132,26 +151,11 @@ class Form
 		}
 	}
 
-	private function _upload($file, $fileName=null)
+
+
+	protected function _getFileName($fileName)
 	{
-		if ($fileName == null)
-		{
-			$fileName = $this->_getFileName($file->getClientFilename());
-		}
-
-		if ($file->getError() === UPLOAD_ERR_OK)
-		{
-		    $file->moveTo($path . $fileName);
-			return true;
-		}
-
-		return false;
-	}
-
-	private function _getFileName($fileName)
-	{
-		$i           = 1;
-		$tmpFileName = $fileName;
+		$i = 1;
 
 		while (1)
 		{
@@ -159,8 +163,7 @@ class Form
 			{
 				return $fileName;
 			}
-
-			$tmpFileName = $i . $fileName;
+			$fileName = $i . '_' . $fileName;
 			$i++;
 		}
 	}
@@ -169,7 +172,7 @@ class Form
 	{
 		if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
 		{
-			if ($this->_upload($file) === true)
+			if ($this->upload($file) === true)
 			{
 				return true;
 			}
