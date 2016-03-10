@@ -4,6 +4,7 @@
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
+use App\HomeController;
 
 $container = $app->getContainer();
 
@@ -26,6 +27,10 @@ $container['view'] = function ($container) use ($app) {
     $view->getEnvironment()->addGlobal('theme', $theme);
 
     return $view;
+};
+
+$container['HomeController'] = function ($container) {
+    return new HomeController();
 };
 
 // Register flash message on container

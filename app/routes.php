@@ -6,9 +6,10 @@ use Slim\Csrf\Guard;
 use App\Form;
 
 // Home page for viewers
-$app->get('/', function ($request, $response) {
-	return $this->view->render($response, 'home.twig');
-})->setName('home');
+// $app->get('/', function ($request, $response) {
+// 	return $this->view->render($response, 'home.twig');
+// })->setName('home');
+$app->get('/', 'HomeController:home');
 
 // Login page
 $app->get('/login', function ($request, $response) {

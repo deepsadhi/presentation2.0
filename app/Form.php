@@ -8,11 +8,16 @@ class Form
 {
 	public $form = [];
 
+	public function __construct()
+	{
+		$this->form['error'] = false;
+	}
+
 	protected function upload($file, $fileName=null)
 	{
 		if ($fileName === null)
 		{
-			$fileName = $this->_getFileName($file->getClientFilename());
+			$fileName = $this->getFileName($file->getClientFilename());
 		}
 
 		if ($file->getError() === UPLOAD_ERR_OK)
@@ -26,75 +31,72 @@ class Form
 
 	public function createOrUpdate($input, $file, $path, $edit = false)
 	{
-		$input 					   = $this->trimWhiteSpace($input);
+		$input['title'] 		   = trim($input['title']);
 		$input['title']            = preg_replace('/[^a-z0-9_]/i',
 		                                          '',
 		                                          $input['title']);
+		$input['content'] 		   = tirm($input['content']);
 
-		$fileName                  = $this->input['title'].'.md';
-		$this->form['input_value'] = $this->input;
+		$fileName                  = $input['title'].'.md';
+		$this->form['input_value'] = $input;
 
 		$msg = !$edit ? 'created' : 'updated';
 
-		try
+		if (empty($input['title']))
 		{
-			if (empty($this->input['title']))
-			{
-				$this->form['invalid_input'] = 'title';
-				throw new Exception('Please enter title of presentation.');
-			}
+			$this->form['error']                  = true;
+			$this->form['invalid_input']['title'] = true;
+			$this->form['input_message']['title'] = 'Please enter title of presentation.';
+		}
 
-			if (!$edit)
+		if (!$edit)
+		{
+			if (file_exists($path . $fileName))
 			{
-				if (file_exists($path.$fileName))
-				{
-					$this->form['invalid_input'] = 'title';
-					throw new Exception('Presentation filename with title already exists.');
-				}
+				$this->form['error']                  = true;
+				$this->form['invalid_input']['title'] = true;
+				$this->form['input_message']['title'] = 'Presentation filename of title already exists.';
 			}
+		}
 
-			if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
+		if ($this->form['error'] === false &&
+		    isset($_FILES['file']) && $_FILES['file']['size'] != 0)
+		{
+			if ($this->upload($this->path, $fileName) === true)
 			{
-				if ($this->upload($this->path, $fileName) === true)
-				{
-					$this->flash['error']   = false;
-					$this->flash['message'] = 'Presentation '.$msg.' successfully.';
-					return true;
-				}
-				else
-				{
-					$this->form['invalid_input'] = 'file';
-					throw new Exception('Error! while uploading file.');
-				}
+				$this->form['message'] = 'Presentation '.$msg.' successfully.';
+				return true;
 			}
 			else
 			{
-				if (empty($this->input['content']))
-				{
-					$this->form['invalid_input'] = 'content';
-					throw new Exception('Please enter presentation contents.');
-				}
-
-				if (file_put_contents($path.$fileName,
-				                      $this->input['content']) === true)
-				{
-					$this->flash['error']   = false;
-   				    $this->flash['message'] = 'Presentation '.$msg.' successfully.';
-					return true;
-				}
-				else
-				{
-					$this->form['invalid_input'] = 'content';
-					throw new Exception('Error! while writing contents to file.');
-				}
+				$this->form['error']                 = true;
+				$this->form['message'] 				 = 'Error! while uploading file'];
+				$this->form['input_message']['file'] = '';
 			}
 		}
-		catch (Exception $e)
+		else if($this->form['error'] === false)
 		{
-			$this->flash['error']   = true;
-			$this->flash['message'] = $e->getMessage();
-			return false;
+			if (empty($input['content']))
+			{
+				$this->form['error']                    = true;
+				$this->form['invalid_input']['content'] = true;
+				$this->form['input_message']['content'] = 'Enter contents for presentation.';
+			}
+
+			if (file_put_contents($path.$fileName,
+			                      $input['content']) === true)
+			{
+				$this->form['message'] = 'Presentation '.$msg.' successfully.';
+				return true;
+			}
+			else
+			{
+				$this->form['error']                 = true;
+				$this->form['message'] 				 = 'Error! while creating presentation file'];
+				$this->form['input_message']['file'] = '';
+			}
 		}
+
 	}
 
 	protected function trimWhiteSpace(Array $input)
@@ -109,51 +111,53 @@ class Form
 
 	public function updateUserPass(Array $input)
 	{
-		$input                     = $this->trimWhiteSpace($input);
-		$this->form['input_value'] = $input;
+		$input['new_username']                     = tirm($input['new_username']);
+		$this->form['input_value']['new_username'] = $input['new_username'];
 
-		try
+		if (empty($input['old_password']))
 		{
-			if (empty($input['old_password']))
-			{
-				$this->['invalid_input']['old_password'] = true;
-				throw new Exception('Please enter your old password.');
-			}
-
-			if (strlen($this->input['new_username']) < 3 &&
-			    strlen($this->input['new_username']) > 12)
-			{
-				$this->input['invalid']['new_username'] = true;
-				throw new Exception('Username should of length between 3-12');
-			}
-
-			if (preg_replace('/[^a-z0-9_.]/i', '', $this->input['new_username'])
-			    != $this->input['new_username'])
-			{
-				$this->input['invalid']['new_username'] = true;
-				throw new Exception('Username support only alpha numeric character with . and _');
-			}
-
-			if (strlen($this->input['new_password']) < 6 &&
-			    strlen($this->input['new_password']) > 12)
-			{
-				$this->input['invalid']['new_password'] = true;
-				throw new Exception('Password should of length between 6-12');
-			}
-
-
+			$this->form['error']                         = true;
+			$this->form['invalid_input']['old_password'] = true;
+			$this->form['input_message']['old_password'] = 'Enter old password.';
 		}
-		catch (Exception $e)
+
+		if (strlen($input['new_username']) < 3 &&
+		    strlen($input['new_username']) > 12)
 		{
-			$this->input['error']   = true;
-			$this->input['message'] = $e->getMessage();
+			$this->form['error']                         = true;
+			$this->form['invalid_input']['new_username'] = true;
+			$this->form['input_message']['new_username'] = 'New username should be of length 3-12.';
+		}
+
+		if (preg_replace('/[^a-z0-9_]/i', '', $input['new_username'])
+		    != $input['new_username'])
+		{
+			$this->form['error']                         = true;
+			$this->form['invalid_input']['new_username'] = true;
+			$this->form['input_message']['new_username'] = 'Username supports only alpha numeric character with _';
+		}
+
+		if (strlen($input['new_password']) < 6 &&
+		    strlen($input['new_password']) > 12)
+		{
+			$this->form['error']                         = true;
+			$this->form['invalid_input']['new_password'] = true;
+			$this->form['input_message']['new_password'] = 'Password should of length 6-12.';
+		}
+
+		if ($this->form['error'] === true)
+		{
+			$this->form['message'] = 'Some fields are invalid.'
 			return false;
 		}
+		{
+		}
+
 	}
 
 
 
-	protected function _getFileName($fileName)
+	protected function getFileName($fileName)
 	{
 		$i = 1;
 
@@ -163,6 +167,7 @@ class Form
 			{
 				return $fileName;
 			}
+
 			$fileName = $i . '_' . $fileName;
 			$i++;
 		}

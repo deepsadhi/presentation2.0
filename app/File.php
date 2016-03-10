@@ -25,6 +25,7 @@ class File
 	 */
 
 	public $files = [];
+
 	/**
 	 * Store error and success messages
 	 *
@@ -56,6 +57,9 @@ class File
 	 */
 	public function ls()
 	{
+		global $app;
+		print_r($app);
+		die();
 		$files     = [];
 		$directory = opendir($this->_path);
 
