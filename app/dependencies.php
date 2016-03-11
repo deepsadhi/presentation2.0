@@ -4,7 +4,8 @@
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
-use App\HomeController;
+
+use App\Controller;
 
 $container = $app->getContainer();
 
@@ -29,8 +30,9 @@ $container['view'] = function ($container) use ($app) {
     return $view;
 };
 
-$container['HomeController'] = function ($container) {
-    return new HomeController();
+// Register controller on container
+$container[Controller::class] = function ($container) {
+    return new Controller($container);
 };
 
 // Register flash message on container

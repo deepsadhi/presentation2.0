@@ -18,19 +18,21 @@
     <!-- Begin page content -->
     <div class="container">
         <div class="col-lg-6 col-md-offset-3">
+
+
           <form class="form-horizontal" action="{{ path_for('login') }}" method="POST">
             <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
             <fieldset>
-              <div class="alert alert-{{ error ? 'danger' : 'info' }}">
-                <p>{{ error ? 'Invalid! username / password combination.' : 'Enter username and password.' }}</p>
-              </div>
-              <div class="{{ error ? 'has-error' : '' }}">
+
+              {% include "form.alert.twig" %}
+
+              <div class="{{ form.error ? 'has-error' : '' }}">
                 <label class="control-label">Username</label>
                 <div class="">
-                  <input type="text" name="username" value="{{ username ?? '' }}" class="form-control">
+                  <input type="text" name="username" value="{{ form.input_value.username ?? '' }}" class="form-control">
                 </div>
               </div>
-              <div class="{{ error ? 'has-error' : '' }}">
+              <div class="{{ form.error ? 'has-error' : '' }}">
                 <label class="control-label">Password</label>
                 <div class="">
                   <input type="password" name="password" class="form-control">
