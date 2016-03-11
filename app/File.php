@@ -9,14 +9,14 @@ class File
 	 *
 	 * @var string
 	 */
-	private $_path;
+	protected $path;
 
 	/**
 	 * Store extensions of files to be listed
 	 *
 	 * @var array
 	 */
-	private $_extensions;
+	protected $extensions;
 
 	/**
 	 * Store list of files in path
@@ -43,8 +43,8 @@ class File
 	 */
 	public function __construct($path, $extensions='')
 	{
-		$this->_path            = $path;
-		$this->_extensions      = $extensions;
+		$this->path            = $path;
+		$this->extensions      = $extensions;
 		$this->flash['error']   = false;
 		$this->flash['message'] = '';
 	}
@@ -57,36 +57,30 @@ class File
 	 */
 	public function ls()
 	{
-		global $app;
-		print_r($app);
-		die();
 		$files     = [];
-		$directory = opendir($this->_path);
+		$directory = opendir($this->path);
 
 		if ($directory)
 		{
 			while (false !== ($filename = readdir($directory)))
 			{
-				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->_extensions.'$/i',
+				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->extensions.'$/i',
 				               $filename) == true))
 				{
-					$fn      = $this->_path . '/' . $filename;
+					$fn      = $this->path . '/' . $filename;
 					$files[] = ['name' => $filename,
-								'size' => $this->_formatSize(filesize($fn)),
+								'size' => $this->formatSize(filesize($fn)),
 								'date' => date("M d, Y h:i A", filemtime($fn))
 							   ];
 				}
 			}
+
+			return $files;
 		}
 		else
 		{
-			$this->flash['error']   = true;
-			$this->flash['message'] = 'Directory "'.realpath($this->_path).
-									  '" cannot be accessed. Please give '.
-									  'execute permission.';
+			return false;
 		}
-
-		$this->files = $files;
 	}
 
 	/**
@@ -95,7 +89,7 @@ class File
 	 * @param  int    $bytes File size
 	 * @return string        File size in human readable
 	 */
-    private function _formatSize($bytes)
+    protected function formatSize($bytes)
     {
         if ($bytes >= 1073741824)
         {
@@ -127,12 +121,12 @@ class File
 
 	public function delete()
 	{
-		$filename = explode('/', $this->_path);
+		$filename = explode('/', $this->path);
 		$filename = end($filename);
 
-		if (file_exists($this->_path))
+		if (file_exists($this->path))
 		{
-			if (unlink($this->_path))
+			if (unlink($this->path))
 			{
 				$this->flash['error']   = false;
 				$this->flash['message'] = 'File '.$filename.' deleted successfully.';
@@ -156,7 +150,7 @@ class File
 		}
 		else
 		{
-			$fileName = explode('/', $this->_path);
+			$fileName = explode('/', $this->path);
 			$fileName = end($fileName);
 
 			$this->flash['error'] = true;

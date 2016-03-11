@@ -10,10 +10,15 @@ use App\User;
 class Controller
 {
 	protected $view;
+    protected $flash;
+    protected $container;
+
 
 	public function __construct($container)
 	{
-		$this->view = $container['view'];
+        $this->view     = $container['view'];
+        $this->flash    = $container['flash'];
+        $this->settings = $container['settings'];
 	}
 
     public function home(Request $request, Response $response)
@@ -62,23 +67,28 @@ class Controller
     public function admin(Request $request, Response $response)
     {
         // List of presentation files
-            $path  = $app->getContainer()->get('settings')['presentation']['markdown'];
-            $file  = new File($path, 'md|markdown');
-            $file->ls();
-            $data = [
-                'files'      => $file->files,
-                'error'      => $file->flash,
-                'csrf_name'  => $request->getAttribute('csrf_name'),
-                'csrf_value' => $request->getAttribute('csrf_value'),
-                'activePage' => 'home',
-            ];
-            if ($this->flash->getMessages())
-            {
-                $data['flash']            = [];
-                $data['flash']['error']   = $this->flash->getMessages()['error'][0];
-                $data['flash']['message'] = $this->flash->getMessages()['message'][0];
-            }
-            return $this->view->render($response, 'admin.twig', $data);
+        $path  = $this->settings['presentation']['markdown'];
+        $file  = new File($path, 'md|markdown');
+
+        if ($file->ls() === false)
+        {
+            $msg   = 'Could not access '.realpath($path).'. Give execute '.
+                     'permissions';
+            $files = [];
+            $this->flash->addMessage('message', $msg);
+            $this->flash->addMessage('alert_type', 'danger');
+        }
+        else
+        {
+            $files = $file->ls();
+        }
+
+        $data = [
+            'files'       => $files,
+            'active_page' => 'home',
+        ];
+
+        return $this->view->render($response, 'admin.twig', $data);
     }
 
 }
