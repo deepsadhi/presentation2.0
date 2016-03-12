@@ -6,14 +6,49 @@ use \Exception;
 
 class Form
 {
-	public $form = [];
+	protected $path;
+	protected $form = [];
 
-	public function __construct()
+	public function __construct($path, Array $form = [])
 	{
+		$this->path 		 = $path;
+		$this->form          = $form;
 		$this->form['error'] = false;
+
+		if (is_writable($path) === false)
+		{
+			$this->form['error']   = true;
+			$this->form['message'] = realpath($this->path).' is not writable. '.
+									 'Give write permissions.';
+		}
+		else
+		{
+			$this->form['message'] = 'Enter details to create presentation.';
+		}
 	}
 
-	protected function upload($file, $fileName=null)
+	public function getForm()
+	{
+		return $this->form;
+	}
+
+	protected function getFileName($fileName)
+	{
+		$i = 1;
+
+		while (1)
+		{
+			if (!(file_exists($this->path . $fileName)))
+			{
+				return $fileName;
+			}
+
+			$fileName = $i . '_' . $fileName;
+			$i++;
+		}
+	}
+
+	protected function upload($file, $fileName = null)
 	{
 		if ($fileName === null)
 		{
@@ -22,80 +57,74 @@ class Form
 
 		if ($file->getError() === UPLOAD_ERR_OK)
 		{
-		    $file->moveTo($path . $fileName);
+		    $file->moveTo($this->path . $fileName);
 			return true;
 		}
 
 		return false;
 	}
 
-	public function createOrUpdate($input, $file, $path, $edit = false)
+	public function create($input, $file, $path, $edit = false)
 	{
 		$input['title'] 		   = trim($input['title']);
-		$input['title']            = preg_replace('/[^a-z0-9_]/i',
-		                                          '',
-		                                          $input['title']);
-		$input['content'] 		   = tirm($input['content']);
-
 		$fileName                  = $input['title'].'.md';
 		$this->form['input_value'] = $input;
-
-		$msg = !$edit ? 'created' : 'updated';
 
 		if (empty($input['title']))
 		{
 			$this->form['error']                  = true;
 			$this->form['invalid_input']['title'] = true;
-			$this->form['input_message']['title'] = 'Please enter title of presentation.';
+			$this->form['input_message']['title'] = 'Enter title of presentation.';
 		}
 
-		if (!$edit)
+		if (preg_replace('/[^a-z0-9_]/i', '', $input['title'])
+		    != $input['title'])
 		{
-			if (file_exists($path . $fileName))
+			$this->form['error']                  = true;
+			$this->form['invalid_input']['title'] = true;
+			$this->form['input_message']['title'] = 'Title supports only alpha numeric character with underscore(_).';
+		}
+
+		if (file_exists($path . $fileName))
+		{
+			$this->form['error']                  = true;
+			$this->form['invalid_input']['title'] = true;
+			$this->form['input_message']['title'] = 'Presentation with title filename already exists.';
+		}
+
+		if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)
+		{
+			$extension = end(explode('.', $file->getClientFilename()));
+
+			if ($extension != 'md')
 			{
-				$this->form['error']                  = true;
-				$this->form['invalid_input']['title'] = true;
-				$this->form['input_message']['title'] = 'Presentation filename of title already exists.';
+				$this->form['error'] = true;
 			}
+		}
+		else
+		{
+			$this->form['error']                 = true;
+			$this->form['invalid_input']['file'] = true;
+			$this->form['input_message']['file'] = 'Select a valid markdown file with extension ".md".';
 		}
 
 		if ($this->form['error'] === false &&
 		    isset($_FILES['file']) && $_FILES['file']['size'] != 0)
 		{
-			if ($this->upload($this->path, $fileName) === true)
+			if ($this->upload($file, $fileName) === true)
 			{
-				$this->form['message'] = 'Presentation '.$msg.' successfully.';
+				$this->form['error']   = false;
+				$this->form['message'] = 'Presentation created successfully.';
 				return true;
 			}
-			else
-			{
-				$this->form['error']                 = true;
-				$this->form['message'] 				 = 'Error! while uploading file'];
-				$this->form['input_message']['file'] = '';
-			}
 		}
-		else if($this->form['error'] === false)
-		{
-			if (empty($input['content']))
-			{
-				$this->form['error']                    = true;
-				$this->form['invalid_input']['content'] = true;
-				$this->form['input_message']['content'] = 'Enter contents for presentation.';
-			}
 
-			if (file_put_contents($path.$fileName,
-			                      $input['content']) === true)
-			{
-				$this->form['message'] = 'Presentation '.$msg.' successfully.';
-				return true;
-			}
-			else
-			{
-				$this->form['error']                 = true;
-				$this->form['message'] 				 = 'Error! while creating presentation file'];
-				$this->form['input_message']['file'] = '';
-			}
-		}
+		$this->form['error']                 = true;
+		$this->form['message']               = 'Error! while uploading file.';
+		$this->form['invalid_input']['file'] = true;
+		$this->form['input_message']['file'] = 'Select a valid markdown file with extension ".md".';
+
+		return false;
 
 	}
 
@@ -147,7 +176,7 @@ class Form
 
 		if ($this->form['error'] === true)
 		{
-			$this->form['message'] = 'Some fields are invalid.'
+			$this->form['message'] = 'Some fields are invalid.';
 			return false;
 		}
 		{
@@ -157,21 +186,6 @@ class Form
 
 
 
-	protected function getFileName($fileName)
-	{
-		$i = 1;
-
-		while (1)
-		{
-			if (!(file_exists($this->path . $fileName))
-			{
-				return $fileName;
-			}
-
-			$fileName = $i . '_' . $fileName;
-			$i++;
-		}
-	}
 
 	public function uploadMedia($file)
 	{
@@ -192,4 +206,4 @@ class Form
 
 
 
-}
+

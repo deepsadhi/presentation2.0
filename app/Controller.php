@@ -66,29 +66,143 @@ class Controller
 
     public function admin(Request $request, Response $response)
     {
-        // List of presentation files
+        $data  = [];
+        $files = [];
         $path  = $this->settings['presentation']['markdown'];
         $file  = new File($path, 'md|markdown');
 
         if ($file->ls() === false)
         {
-            $msg   = 'Could not access '.realpath($path).'. Give execute '.
-                     'permissions';
-            $files = [];
-            $this->flash->addMessage('message', $msg);
-            $this->flash->addMessage('alert_type', 'danger');
+            $data['flash'] = ['message'    => $file->getMessage(),
+                              'alert_type' => 'danger'];
         }
         else
         {
-            $files = $file->ls();
+            $files = $file->getFiles();
         }
 
-        $data = [
-            'files'       => $files,
-            'active_page' => 'home',
-        ];
+        $data['files']       = $files;
+        $data['active_page'] = 'home';
 
         return $this->view->render($response, 'admin.twig', $data);
+    }
+
+    public function create(Request $request, Response $response)
+    {
+        $path = $this->settings['presentation']['markdown'];
+        $form = new Form($path);
+
+        if ($form->getForm()['error'] === true)
+        {
+            $form = ['message'    => $form->getForm()['message'],
+                     'alert_type' => 'danger',
+                    ];
+        }
+        else
+        {
+            $form = ['message'    => $form->getForm()['message'],
+                     'alert_type' => 'info',
+                    ];
+        }
+
+        return $this->view->render($response, 'create.twig', [
+            'form'        => $form,
+            'csrf_name'   => $request->getAttribute('csrf_name'),
+            'csrf_value'  => $request->getAttribute('csrf_value'),
+            'active_page' => 'create',
+        ]);
+    }
+
+    public function store(Request $request, Response $response)
+    {
+        $path  = $this->settings['presentation']['markdown'];
+        $form  = new Form($path);
+        $file  = $request->getUploadedFiles()['file'];
+        $input = $request->getParsedBody();
+
+        if ($form->getForm()['error'] === true)
+        {
+            $form = ['message'    => $form->getForm()['message'],
+                     'alert_type' => 'danger',
+                    ];
+        }
+        else
+        {
+            if ($form->create($input, $file, $path) === true)
+            {
+                $flash = ['message'    => 'Presentation created successfully.',
+                          'alert_type' => 'success'
+                         ];
+                $this->flash->addMessage('flash', $flash);
+
+                return $response->withRedirect('/admin/');
+            }
+        }
+
+        $form               = $form->getForm();
+        $form['alert_type'] = 'danger';
+        return $this->view->render($response, 'create.twig', [
+            'form'        => $form,
+            'csrf_name'   => $request->getAttribute('csrf_name'),
+            'csrf_value'  => $request->getAttribute('csrf_value'),
+            'active_page' => 'create',
+        ]);
+    }
+
+    public function edit(Request $request, Response $response, Array $args)
+    {
+        $path     = $this->settings['presentation']['markdown'];
+        $fileName = $path . substr_replace($args['file'], '_', '.', -3, 1);
+
+        $file = new File($fileName);
+        if ($file->load() === true)
+        {
+            $data['input'] = ['title'   => $args['title'],
+                              'content' => $file->getContents()
+                             ];
+
+        }
+        else
+        {
+            $flash = ['message'    => 'Error while loading file "'.
+                                      realpath($fileName).'".',
+                      'alert_type' => 'success'
+                     ];
+            $this->flash->addMessage('flash', $flash);
+
+            return $response->withRedirect('/admin/');
+        }
+
+        $data = ['content'    => $file->getContents(),
+                 'message'    => 'Enter details to update presentation.',
+                 'csrf_name'  => $request->getAttribute('csrf_name'),
+                 'csrf_value' => $request->getAttribute('csrf_value'),
+                ];
+
+        return $this->view->render($response, 'edit.twig', $data);
+    }
+
+    public function delete(Request $request, Response $response)
+    {
+        $path     = $request->getParsedBody()['path'];
+        $realPath = $this->settings['presentation'][$path];
+        $filePath = $realPath . $request->getParsedBody()['file'];
+
+        $file      = new File($filePath);
+        $res       = $file->delete();
+        $alertType = ($res === true) ? 'success' : 'danger';
+
+        $this->flash->addMessage('message', $file->getMessage());
+        $this->flash->addMessage('alert_type', $alertType);
+
+        if ($path == 'markdown')
+        {
+            return $response->withRedirect('/admin/');
+        }
+        else if ($path == 'media')
+        {
+            return $response->withRedirect('/admin/media');
+        }
     }
 
 }

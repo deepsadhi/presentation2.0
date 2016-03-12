@@ -27,13 +27,13 @@
                     {% endif %}
                   </div>
                 </div>
-                <div class="{{ form.invalid_input.file ? 'has-error' : '' }}">
-                  <label class="control-label">Markdown file</label>
+                <div class="{{ form.invalid_input.content ? 'has-error' : '' }}">
+                  <label class="control-label">Enter presentation contents in Markdown syntax</label>
                   <div>
-                    <input type="file" name="file">
-                    {% if form.input_message.file %}
+                    <textarea class="form-control" name="content" rows="5">{{ form.input_value.content ?? '' }}</textarea>
+                    {% if form.input_message.content %}
                       <span class="help-block">
-                          <strong>{{ form.input_message.file }}</strong>
+                          <strong>{{ form.input_message.content }}</strong>
                       </span>
                     {% endif %}
                   </div>

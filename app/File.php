@@ -11,29 +11,13 @@ class File
 	 */
 	protected $path;
 
-	/**
-	 * Store extensions of files to be listed
-	 *
-	 * @var array
-	 */
 	protected $extensions;
 
-	/**
-	 * Store list of files in path
-	 *
-	 * @var array
-	 */
+	protected $files = [];
 
-	public $files = [];
+	protected $contents;
 
-	/**
-	 * Store error and success messages
-	 *
-	 * @var array
-	 */
-	public $flash = [];
-
-	public $contents;
+	protected $message;
 
 	/**
 	 * Set path of file or directory
@@ -43,10 +27,8 @@ class File
 	 */
 	public function __construct($path, $extensions='')
 	{
-		$this->path            = $path;
-		$this->extensions      = $extensions;
-		$this->flash['error']   = false;
-		$this->flash['message'] = '';
+		$this->path       = $path;
+		$this->extensions = $extensions;
 	}
 
 
@@ -57,31 +39,47 @@ class File
 	 */
 	public function ls()
 	{
-		$files     = [];
 		$directory = opendir($this->path);
 
 		if ($directory)
 		{
-			while (false !== ($filename = readdir($directory)))
+			while (false !== ($fileName = readdir($directory)))
 			{
 				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->extensions.'$/i',
-				               $filename) == true))
+				               $fileName) == true))
 				{
-					$fn      = $this->path . '/' . $filename;
-					$files[] = ['name' => $filename,
-								'size' => $this->formatSize(filesize($fn)),
-								'date' => date("M d, Y h:i A", filemtime($fn))
-							   ];
+					$fn      = $this->path . '/' . $fileName;
+					$this->files[] = ['name'  => $fileName,
+									  'name_' => substr_replace($fileName,
+									                            '_',
+									                            -3,
+									                            1),
+								      'size'  => $this->formatSize(filesize($fn)),
+								      'date'  => date("M d, Y h:i A",
+								                     filemtime($fn))
+							  		 ];
 				}
 			}
-
-			return $files;
+			return true;
 		}
 		else
 		{
+			$this->message = 'Could not access '.realpath($path).'. '.
+							      'Give execute permissions.';
 			return false;
 		}
 	}
+
+	public function getFiles()
+	{
+		return $this->files;
+	}
+
+	public function getMessage()
+	{
+		return $this->message;
+	}
+
 
 	/**
 	 * Format bytes to human readable file size
@@ -121,22 +119,20 @@ class File
 
 	public function delete()
 	{
-		$filename = explode('/', $this->path);
-		$filename = end($filename);
+		$fileName = explode('/', $this->path);
+		$fileName = end($fileName);
 
 		if (file_exists($this->path))
 		{
 			if (unlink($this->path))
 			{
-				$this->flash['error']   = false;
-				$this->flash['message'] = 'File '.$filename.' deleted successfully.';
+				$this->message = 'File '.$fileName.' deleted successfully.';
 				return true;
 			}
 		}
 
-		$this->flash['error']   = true;
-		$this->flash['message'] = 'Error! while deleting file "'.$filename.'". '.
-								  'Check file and directory permissions.';
+		$this->message = 'Error! while deleting file "'.$fileName.'". Check '.
+						 'file and directory permissions.';
 		return false;
 	}
 
@@ -145,17 +141,19 @@ class File
 		if (file_exists($this->path))
 		{
 			$this->contents = file_get_contents($this->path);
-			$this->flash['error'] = 'false';
 			return true;
 		}
 		else
 		{
-			$fileName = explode('/', $this->path);
-			$fileName = end($fileName);
-
-			$this->flash['error'] = true;
-			$this->flash['message'] = 'Error! loading file '.$fileName.'.';
+			$fileName      = explode('/', $this->path);
+			$fileName      = end($fileName);
+			$this->message = 'Error! loading file '.$fileName.'.';
 			return false;
 		}
+	}
+
+	public function getContents()
+	{
+		return $this->contents;
 	}
 }
