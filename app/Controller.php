@@ -69,7 +69,7 @@ class Controller
         $data  = [];
         $files = [];
         $path  = $this->settings['presentation']['markdown'];
-        $file  = new File($path, 'md|markdown');
+        $file  = new File($path, '/^[a-zA-Z0-9_]*.', 'md|markdown');
 
         if ($file->ls() === false)
         {
@@ -232,6 +232,48 @@ class Controller
 
     }
 
+    public function media(Request $request, Response $response)
+    {
+        $data  = [];
+        $files = [];
+        $path  = $this->settings['presentation']['media'];
+        $file  = new File($path, '/', 'png|jpg|jpeg|bmp|gif');
+
+        if ($_POST)
+        {
+            $form    = new Form($path);
+            $inpFile = $request->getUploadedFiles()['file'];
+
+            if ($form->uploadMedia($inpFile) === true)
+            {
+                $data['flash'] = ['message'    => 'Media uploaded successfully.',
+                                  'alert_type' => 'success'];
+            }
+            else
+            {
+                $data['flash'] = ['message' => 'Error! while uploading media.',
+                                  'alert_type' => 'danger'];
+            }
+        }
+
+        if ($file->ls() === false)
+        {
+            $data['flash'] = ['message'    => $file->getMessage(),
+                              'alert_type' => 'danger'];
+        }
+        else
+        {
+            $files = $file->getFiles();
+        }
+
+        $data['files']       = $files;
+        $data['csrf_name']   = $request->getAttribute('csrf_name');
+        $data['csrf_value']  = $request->getAttribute('csrf_value');
+        $data['active_page'] = 'media';
+
+
+        return $this->view->render($response, 'media.twig', $data);
+    }
 
     public function delete(Request $request, Response $response)
     {

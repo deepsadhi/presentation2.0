@@ -208,8 +208,6 @@ class Form
 	}
 
 
-
-
 	public function uploadMedia($file)
 	{
 		if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)

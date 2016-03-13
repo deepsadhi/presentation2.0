@@ -25,9 +25,10 @@ class File
 	 * @param string $path       Path of file or directory
 	 * @param array  $extensions Supported file type extensions
 	 */
-	public function __construct($path, $extensions='')
+	public function __construct($path, $regex='', $extensions='')
 	{
 		$this->path       = $path;
+		$this->regex 	  = $regex;
 		$this->extensions = $extensions;
 	}
 
@@ -45,7 +46,7 @@ class File
 		{
 			while (false !== ($fileName = readdir($directory)))
 			{
-				if((preg_match('/^[a-zA-Z0-9_]*.'.$this->extensions.'$/i',
+				if((preg_match($this->regex . $this->extensions.'$/i',
 				               $fileName) == true))
 				{
 					$fn      = $this->path . '/' . $fileName;
@@ -64,7 +65,7 @@ class File
 		}
 		else
 		{
-			$this->message = 'Could not access '.realpath($path).'. '.
+			$this->message = 'Could not access '.realpath($this->path).'. '.
 							      'Give execute permissions.';
 			return false;
 		}

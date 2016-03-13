@@ -39,38 +39,11 @@ $app->group('/admin', function () use ($app) {
 	$this->delete('/file', Controller::class.':delete')
 		 ->setName('file');
 
+	// List of media file for presentations
+	$this->get('/media', Controller::class.':media')
+		->setName('media')->add(new Guard);
 
-
-
-		// List of media file for presentations
-		$this->get('/media', function ($request, $response) use ($app) {
-			$path  = $app->getContainer()->get('settings')['presentation']['media'];
-			$file  = new File($path, 'png|jpg|jpeg|bmp|gif');
-			$file->ls();
-			$data = [
-			    'files'      => $file->files,
-			    'error' 	 => $file->flash,
-			    'csrf_name'  => $request->getAttribute('csrf_name'),
-			    'csrf_value' => $request->getAttribute('csrf_value'),
-			    'activePage' => 'media',
-	        ];
-			if ($this->flash->getMessages())
-			{
-				$data['flash']            = [];
-				$data['flash']['error']   = $this->flash->getMessages()['error'][0];
-				$data['flash']['message'] = $this->flash->getMessages()['message'][0];
-			}
-			return $this->view->render($response, 'media.twig', $data);
-		})->setName('media')->add(new Guard);
-
-
-
-
-
-
-
-
-
+	$this->post('/media', Controller::class.':media');
 
 	$this->get('/settings', function($request, $response) {
 		return $this->view->render($response, 'settings.twig', [

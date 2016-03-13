@@ -9,11 +9,12 @@
     <!-- Begin page content -->
     <div class="container">
 
-      {% include "flash.twig" %}
+      {% include "flash.alert.twig" %}
 
       <div class="row">
           <div class="well bs-component">
             <form class="form-horizontal" enctype="multipart/form-data" action="" method="POST">
+              <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
               <input type="hidden" value="" name="token">
                 <div class="form-group">
                   <label class="col-lg-4 col-md-offset-2 control-label">Upload image file (png, gif, bmp, jpg)</label>
@@ -28,7 +29,7 @@
         </div>
       </div>
 
-      {% include "index.twig" %}
+      {% include "media.index.twig" %}
 
     </div> <!-- /container -->
 
