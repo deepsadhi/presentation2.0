@@ -9,10 +9,9 @@ class Form
 	protected $path;
 	protected $form = [];
 
-	public function __construct($path, Array $form = [])
+	public function __construct($path)
 	{
 		$this->path 		 = $path;
-		$this->form          = $form;
 		$this->form['error'] = false;
 
 		if (is_writable($path) === false)
@@ -23,7 +22,7 @@ class Form
 		}
 		else
 		{
-			$this->form['message'] = 'Enter details to create presentation.';
+			$this->form['message'] = 'Enter details.';
 		}
 	}
 
@@ -64,7 +63,7 @@ class Form
 		return false;
 	}
 
-	public function create($input, $file, $path, $edit = false)
+	public function store($input, $file)
 	{
 		$input['title'] 		   = trim($input['title']);
 		$fileName                  = $input['title'].'.md';
@@ -85,7 +84,7 @@ class Form
 			$this->form['input_message']['title'] = 'Title supports only alpha numeric character with underscore(_).';
 		}
 
-		if (file_exists($path . $fileName))
+		if (file_exists($this->path . $fileName))
 		{
 			$this->form['error']                  = true;
 			$this->form['invalid_input']['title'] = true;
@@ -126,6 +125,30 @@ class Form
 
 		return false;
 
+	}
+
+	public function update($input)
+	{
+		$input['content']          = trim($input['content']);
+		$this->form['input_value'] = $input;
+
+		if (empty($input['content']))
+		{
+			$this->form['error']                    = true;
+			$this->form['invalid_input']['content'] = true;
+			$this->form['input_message']['content'] = 'Enter contents for presentation.';
+		}
+
+		if ($this->form['error'] === false &&
+		    file_put_contents($this->path, $input['content']) > 0)
+		{
+			$this->form['message'] = 'Presentation updated successfully.';
+			return true;
+		}
+
+		$this->form['error']   = true;
+		$this->form['message'] = 'Error! while updating presentation file.';
+		return false;
 	}
 
 	protected function trimWhiteSpace(Array $input)

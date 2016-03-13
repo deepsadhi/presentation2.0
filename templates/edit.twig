@@ -10,27 +10,23 @@
     <div class="container">
         <div class="col-lg-8 col-md-offset-2">
           <div class="row">
-            <form class="form-horizontal" action="{{ path_for('create') }}" method="POST" enctype="multipart/form-data">
+            <form class="form-horizontal" action="{{ path_for('edit', {'file': file_name}) }}" method="POST" enctype="multipart/form-data">
               <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
+              <input type="hidden" name="_METHOD" value="PUT">
               <fieldset>
 
                 {% include "form.alert.twig" %}
 
                 <div class="{{ form.invalid_input.title ? 'has-error' : '' }}">
-                  <label class="control-label">Presentation title</label>
+                  <label class="control-label">Presentation file</label>
                   <div>
-                    <input type="text" {{ input.title.disabled ? 'disabled="disabled"' : '' }} name="title" value="{{ form.input_value.title ?? '' }}" class="form-control">
-                    {% if form.input_message.title %}
-                      <span class="help-block">
-                          <strong>{{ form.input_message.title }}</strong>
-                      </span>
-                    {% endif %}
+                    <strong>{{ file_name }}</strong>
                   </div>
                 </div>
                 <div class="{{ form.invalid_input.content ? 'has-error' : '' }}">
                   <label class="control-label">Enter presentation contents in Markdown syntax</label>
                   <div>
-                    <textarea class="form-control" name="content" rows="5">{{ form.input_value.content ?? '' }}</textarea>
+                    <textarea class="form-control" name="content" rows="12">{{ form.input_value.content ?? '' }}</textarea>
                     {% if form.input_message.content %}
                       <span class="help-block">
                           <strong>{{ form.input_message.content }}</strong>
@@ -42,7 +38,7 @@
                 <div>
                   <label></label>
                   <div>
-                    <button class="btn btn-primary" type="submit">Create</button>
+                    <button class="btn btn-primary" type="submit">Update</button>
                   </div>
                 </div>
               </fieldset>

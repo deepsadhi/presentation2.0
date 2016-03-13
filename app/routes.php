@@ -34,6 +34,8 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/presentation/{file}/edit', Controller::class.':edit')
 	     ->setName('edit')->add(new Guard);
 
+	$this->put('/presentation/{file}/edit', Controller::class.':update');
+
 	$this->delete('/file', Controller::class.':delete')
 		 ->setName('file');
 
