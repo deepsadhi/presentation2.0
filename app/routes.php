@@ -34,8 +34,10 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/presentation/{file}/edit', Controller::class.':edit')
 	     ->setName('edit')->add(new Guard);
 
+	// Form to update presentation file
 	$this->put('/presentation/{file}/edit', Controller::class.':update');
 
+	// Delete media or presentation file
 	$this->delete('/file', Controller::class.':delete')
 		 ->setName('file');
 
@@ -43,6 +45,7 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/media', Controller::class.':media')
 		->setName('media')->add(new Guard);
 
+	// Upload media file
 	$this->post('/media', Controller::class.':media');
 
 	$this->get('/settings', function($request, $response) {
