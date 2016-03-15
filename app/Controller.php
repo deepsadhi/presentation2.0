@@ -21,11 +21,25 @@ class Controller
         $this->settings = $container['settings'];
 	}
 
+    /**
+     * Home page
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function home(Request $request, Response $response)
     {
         return $this->view->render($response, 'home.twig');
     }
 
+    /**
+     * Login page
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function login(Request $request, Response $response)
     {
     	$form = ['message'    => 'Enter username and password.',
@@ -39,6 +53,13 @@ class Controller
 		]);
     }
 
+    /**
+     * Authenticate login
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function authenticate(Request $request, Response $response)
     {
     	$username = $request->getParsedBody()['username'];
@@ -64,6 +85,13 @@ class Controller
     	}
     }
 
+    /**
+     * List of presentations
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function admin(Request $request, Response $response)
     {
         $data  = [];
@@ -87,6 +115,13 @@ class Controller
         return $this->view->render($response, 'admin.twig', $data);
     }
 
+    /**
+     * Create presentation
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function create(Request $request, Response $response)
     {
         $path = $this->settings['presentation']['markdown'];
@@ -113,6 +148,13 @@ class Controller
         ]);
     }
 
+    /**
+     * Store presentation
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function store(Request $request, Response $response)
     {
         $path  = $this->settings['presentation']['markdown'];
@@ -149,6 +191,14 @@ class Controller
         ]);
     }
 
+    /**
+     * Edit presentation
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @param  Array    $args     [description]
+     * @return [type]             [description]
+     */
     public function edit(Request $request, Response $response, Array $args)
     {
         $path     = $this->settings['presentation']['markdown'];
@@ -194,6 +244,14 @@ class Controller
         return $this->view->render($response, 'edit.twig', $data);
     }
 
+    /**
+     * Update presentation
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @param  Array    $args     [description]
+     * @return [type]             [description]
+     */
     public function update(Request $request, Response $response, Array $args)
     {
         $path     = $this->settings['presentation']['markdown'];
@@ -232,6 +290,13 @@ class Controller
 
     }
 
+    /**
+     * List of media files
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function media(Request $request, Response $response)
     {
         $data  = [];
@@ -275,6 +340,13 @@ class Controller
         return $this->view->render($response, 'media.twig', $data);
     }
 
+    /**
+     * Delete media or presentation file
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function delete(Request $request, Response $response)
     {
         $path     = $request->getParsedBody()['path'];
