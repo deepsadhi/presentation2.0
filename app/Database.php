@@ -85,23 +85,17 @@ class Database
      *
      * @return bool   Success or failure to set value
      */
-    public function setValueOf($table, array $data)
+    public function changeUserPass($table, array $data)
     {
         $this->_initQuery();
 
-        $keys = array();
-        foreach ($data as $d)
-        {
-            $keys[] = $d['key'];
-        }
-
         try
         {
-            $sql  = 'INSERT INTO '.$table.'('.implode(', ', $keys).') '.
-                    'VALUES (:'.implode(', :', $keys).')';
+            $sql  = 'UPDATE '.$table.' SET username=:username, '.
+                    'password=:password WHERE id=1';
 
             $this->_stmt = $this->_db->prepare($sql);
-            $this->_bind();
+            $this->_bind($data);
             $this->_stmt->execute();
 
             return true;
@@ -133,7 +127,7 @@ class Database
                     $data['key'].' = :'.$data['key'].' LIMIT 1';
 
             $this->_stmt = $this->_db->prepare($sql);
-            $this->_bind(array($data));
+            $this->_bind([$data]);
             $this->_stmt->execute();
             $this->result   = $this->_stmt->fetchAll(PDO::FETCH_ASSOC);
             $this->rowCount = count($this->result);

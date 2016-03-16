@@ -48,37 +48,13 @@ $app->group('/admin', function () use ($app) {
 	// Upload media file
 	$this->post('/media', Controller::class.':media');
 
-	$this->get('/settings', function($request, $response) {
-		return $this->view->render($response, 'settings.twig', [
-			'input'      => ['value' => ['new_username' => User::getUserName()]],
-			'message'    => 'Enter details.',
-			'csrf_name'  => $request->getAttribute('csrf_name'),
-			'csrf_value' => $request->getAttribute('csrf_value'),
-			'activePage' => 'settings',
-		]);
-	})->setName('settings')->add(new Guard);
+	// Form to update username and password
+	$this->get('/settings', Controller::class.':editUserPass')
+		 ->setName('settings')->add(new Guard);
 
-	$this->put('/settings', function ($request, $response) {
-		$input = $request->getParsedBody();
-		$form = new Form;
+	// Update username and password
+	$this->put('/settings', Controller::class.':updateUserPass');
 
-		if ($form->updateUserPass($input) == true)
-		{
-			$this->flash->addMessage('error', $form->flash['error']);
-			$this->flash->addMessage('message', $form->flash['message']);
-
-			return $response->withRedirect('/admin/');
-		}
-		else
-		{
-			return $this->view->render($response, 'settings.twig', [
-				'input' 	 => $form->input,
-				'csrf_name'  => $request->getAttribute('csrf_name'),
-				'csrf_value' => $request->getAttribute('csrf_value'),
-				'activePage' => 'settings',
-			]);
-		}
-	});
 })->add(function ($request, $response, $next) {
 	if (User::authenticate() === false)
 	{
@@ -93,5 +69,6 @@ $app->group('/admin', function () use ($app) {
 // Logout page
 $app->get('/logout', function($request, $response) {
 	User::logout();
+
 	return $response->withRedirect('/login');
 })->setName('logout');

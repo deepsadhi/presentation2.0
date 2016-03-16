@@ -55,9 +55,7 @@ class User
 	{
 		self::connectDb();
 
-		$data = array('type'  => 'STR',
-		              'key'   => 'username',
-		              'value' => $username);
+		$data = ['type' => 'STR', 'key' => 'username', 'value' => $username];
 
 		if (self::$_db->getValueOf('users', $data))
 		{
@@ -73,6 +71,22 @@ class User
 		}
 
 		return false;
+	}
+
+	public static function changeUserPass($username, $password)
+	{
+		$data = [['type' => 'STR', 'key' => 'username', 'value' => $username],
+				 ['type' => 'STR', 'key' => 'password', 'value' => $password]
+				];
+
+		if (self::$_db->changeUserPass('users', $data))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/**

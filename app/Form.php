@@ -3,26 +3,24 @@
 namespace App;
 
 use \Exception;
+use App\User;
 
 class Form
 {
 	protected $path;
 	protected $form = [];
 
-	public function __construct($path)
+	public function __construct($path=null)
 	{
-		$this->path 		 = $path;
-		$this->form['error'] = false;
+		$this->form['error']   = false;
+		$this->form['message'] = 'Enter details.';
 
-		if (is_writable($path) === false)
+		if ($path !== null && is_writable($path) === false)
 		{
+			$this->path 		   = $path;
 			$this->form['error']   = true;
 			$this->form['message'] = realpath($this->path).' is not writable. '.
 									 'Give write permissions.';
-		}
-		else
-		{
-			$this->form['message'] = 'Enter details.';
 		}
 	}
 
@@ -151,20 +149,10 @@ class Form
 		return false;
 	}
 
-	protected function trimWhiteSpace(Array $input)
-	{
-		foreach ($input as $key => $value)
-		{
-			$input[$key] = trim($value);
-		}
-
-		return $input;
-	}
-
 	public function updateUserPass(Array $input)
 	{
-		$input['new_username']                     = tirm($input['new_username']);
-		$this->form['input_value']['new_username'] = $input['new_username'];
+		$input['new_username']     = trim($input['new_username']);
+		$this->form['input_value'] = $input;
 
 		if (empty($input['old_password']))
 		{
@@ -173,8 +161,9 @@ class Form
 			$this->form['input_message']['old_password'] = 'Enter old password.';
 		}
 
-		if (strlen($input['new_username']) < 3 &&
-		    strlen($input['new_username']) > 12)
+		if (empty($input['new_username']) ||
+		    (strlen($input['new_username']) < 3 &&
+		     strlen($input['new_username']) > 12))
 		{
 			$this->form['error']                         = true;
 			$this->form['invalid_input']['new_username'] = true;
@@ -186,15 +175,16 @@ class Form
 		{
 			$this->form['error']                         = true;
 			$this->form['invalid_input']['new_username'] = true;
-			$this->form['input_message']['new_username'] = 'Username supports only alpha numeric character with _';
+			$this->form['input_message']['new_username'] = 'Username supports only alpha numeric character with underscore(_).';
 		}
 
-		if (strlen($input['new_password']) < 6 &&
-		    strlen($input['new_password']) > 12)
+		if (empty($input['new_password']) ||
+		    (strlen($input['new_password']) < 6 &&
+		     strlen($input['new_password']) > 20))
 		{
 			$this->form['error']                         = true;
 			$this->form['invalid_input']['new_password'] = true;
-			$this->form['input_message']['new_password'] = 'Password should of length 6-12.';
+			$this->form['input_message']['new_password'] = 'Password should of length 6-20.';
 		}
 
 		if ($this->form['error'] === true)
@@ -202,9 +192,23 @@ class Form
 			$this->form['message'] = 'Some fields are invalid.';
 			return false;
 		}
+		else
 		{
-		}
+			$username = User::getUserName();
+			if (User::login($username, $input['old_password']) === false)
+			{
+				$this->form['invalid_input']['old_password'] = true;
+				$this->form['input_message']['old_password'] = 'Enter correct old password.';
+				$this->form['message'] = 'Invalid old password.';
+				return false;
+			}
 
+			if (User::changeUserPass($input['new_username'], $input['new_password']))
+			{
+				$this->form['message'] = 'Username and password changed successfully.';
+				return true;
+			}
+		}
 	}
 
 

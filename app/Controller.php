@@ -9,11 +9,33 @@ use App\User;
 
 class Controller
 {
+    /**
+     * Store Twig view
+     *
+     * @var [type]
+     */
 	protected $view;
+
+    /**
+     * Store Slim flash messages
+     *
+     * @var [type]
+     */
     protected $flash;
+
+    /**
+     * Store Slim app container
+     *
+     * @var [type]
+     */
     protected $container;
 
 
+    /**
+     * Initialize container
+     *
+     * @param [type] $container [description]
+     */
 	public function __construct($container)
 	{
         $this->view     = $container['view'];
@@ -370,4 +392,44 @@ class Controller
         }
     }
 
+    public function editUserPass(Request $request, Response $response)
+    {
+        $form = ['message'     => 'Enter details.',
+                 'input_value' => ['new_username' => User::getUserName()],
+                 'alert_type'  => 'info',
+                ];
+
+        return $this->view->render($response, 'settings.twig', [
+            'form'        => $form,
+            'csrf_name'   => $request->getAttribute('csrf_name'),
+            'csrf_value'  => $request->getAttribute('csrf_value'),
+            'active_page' => 'settings',
+        ]);
+    }
+
+    public function updateUserPass(Request $request, Response $response)
+    {
+        $input = $request->getParsedBody();
+        $form = new Form;
+
+        if ($form->updateUserPass($input) === true)
+        {
+            $this->flash->addMessage('message', $form->flash['message']);
+            $this->flash->addMessage('alert_type', 'success');
+
+            return $response->withRedirect('/admin/');
+        }
+        else
+        {
+            $form               = $form->getForm();
+            $form['alert_type'] = 'danger';
+
+            return $this->view->render($response, 'settings.twig', [
+                'form'        => $form,
+                'csrf_name'   => $request->getAttribute('csrf_name'),
+                'csrf_value'  => $request->getAttribute('csrf_value'),
+                'active_page' => 'settings',
+            ]);
+        }
+    }
 }
