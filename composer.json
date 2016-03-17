@@ -1,5 +1,20 @@
 {
+    "name": "deepsadhi/presentation2.0",
+    "type": "framework",
+    "description": "Presentation tool",
+    "keywords": ["presentation", "markdown", "slide sync"],
+    "homepage": "https://github.com/deepsadhi/presentation2.0",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Deepak Adhikari",
+            "email": "deeps.adhi@gmail.com",
+            "homepage": "https://about.me/deepsadhi"
+        }
+    ],
     "require": {
+        "php": ">=5.5.0",
+        "php-sqlite":"",
         "erusev/parsedown": "1.6.0",
         "cboden/ratchet": "0.3.4",
         "slim/slim-skeleton": "3.0.1",

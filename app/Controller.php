@@ -2,11 +2,11 @@
 
 namespace App;
 
+use App\User;
+use App\Slide;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-use App\User;
-use App\Slide;
 
 class Controller
 {
@@ -236,6 +236,14 @@ class Controller
         return $this->view->render($response, 'show.twig');
     }
 
+    /**
+     * Presentation slide as json
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @param  Array    $args     [description]
+     * @return [type]             [description]
+     */
     public function json(Request $request, Response $response, Array $args)
     {
         $path        = $this->settings['presentation']['markdown'];
@@ -441,6 +449,13 @@ class Controller
         }
     }
 
+    /**
+     * Edit username and password
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function editUserPass(Request $request, Response $response)
     {
         $form = ['message'     => 'Enter details.',
@@ -456,6 +471,13 @@ class Controller
         ]);
     }
 
+    /**
+     * Update usernamde and password
+     *
+     * @param  Request  $request  [description]
+     * @param  Response $response [description]
+     * @return [type]             [description]
+     */
     public function updateUserPass(Request $request, Response $response)
     {
         $input = $request->getParsedBody();

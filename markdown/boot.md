@@ -1,5 +1,6 @@
 # [Bootstrap](http://getbootstrap.com)
 
+[![Slack](/media/Git-Cheat-Sheet.png)](https://bootstrap-slack.herokuapp.com)
 [![Slack](https://bootstrap-slack.herokuapp.com/badge.svg)](https://bootstrap-slack.herokuapp.com)
 ![Bower version](https://img.shields.io/bower/v/bootstrap.svg)
 [![npm version](https://img.shields.io/npm/v/bootstrap.svg)](https://www.npmjs.com/package/bootstrap)

@@ -4,6 +4,7 @@
             <tr>
               <th>#</th>
               <th>File name</th>
+              <th>URL to include media in presentation</th>
               <th>File size</th>
               <th>Modified on</th>
               <th>Action</th>
@@ -15,6 +16,7 @@
             <tr>
               <td>{{ i }}</td>
               <td><a target="_blank" href="/media/{{ file.name }}">{{ file.name }}</a></td>
+              <td>/media/{{ file.name }}</td>
               <td>{{ file.size }}</td>
               <td>{{ file.date }}</td>
               <td>

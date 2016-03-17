@@ -70,6 +70,7 @@ class Slide
 		$slide = str_replace("'",     "\'", $slide);
 		$slide = str_replace(PHP_EOL, "",   $slide);
 		$slide = str_replace('<a href=', '<a target="_blank" href=', $slide);
+		$slide = str_replace('<img src=', '<img class="img-responsive" src=', $slide);
 
 		return $slide;
 	}
@@ -94,6 +95,7 @@ class Slide
 		$slide = str_replace("'",     "\'", $slide);
 		$slide = str_replace(PHP_EOL, "",   $slide);
 		$slide = str_replace('<a href=', '<a target="_blank" href=', $slide);
+		$slide = str_replace('<img src=', '<img class="img-responsive" src=', $slide);
 
 		$msg = array('prev' => $this->prev, 'next' => $this->next,
 		             'slide' => $slide, 'count' => ($this->_slideCount - 1));
