@@ -1,5 +1,6 @@
 <?php
-require '../vendor/autoload.php';
+
+require __DIR__ . '/../vendor/autoload.php';
 defined('APP_PATH') ? null : define('APP_PATH', dirname(dirname(__FILE__)));
 
 

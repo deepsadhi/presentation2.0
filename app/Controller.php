@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 use App\User;
+use App\Slide;
 
 class Controller
 {
@@ -213,6 +214,54 @@ class Controller
         ]);
     }
 
+    public function show(Request $request, Response $response, Array $args)
+    {
+        $path     = $this->settings['presentation']['markdown'];
+        $fileName = substr_replace($args['file'], '.', -3, 1);
+        $filePath = $path . $fileName;
+
+        $file = new File($filePath);
+        if ($file->load() === false)
+        {
+            $flash = ['message'    => 'Error while loading file "'.
+                                      $fileName.'".',
+                      'alert_type' => 'danger'
+                     ];
+            $this->flash->addMessage('message', $flash['message']);
+            $this->flash->addMessage('alert_type', $flash['alert_type']);
+
+            return $response->withRedirect('/admin/');
+        }
+
+        return $this->view->render($response, 'show.twig');
+    }
+
+    public function json(Request $request, Response $response, Array $args)
+    {
+        $path        = $this->settings['presentation']['markdown'];
+        $fileName    = substr_replace($args['file'], '.', -3, 1);
+        $filePath    = $path . $fileName;
+        $slideNumber = (int) preg_replace('/\D/', '', $args['slide']);
+
+        $file     = new File($filePath);
+        $response = [];
+
+        if ($file->load() === true)
+        {
+            $slide = new Slide($filePath);
+
+            $response['error'] = false;
+            $response['slide'] = $slide->renderForAjax($slideNumber);
+        }
+        else
+        {
+            $response['error']   = true;
+            $response['message'] = 'Could not load presentation file.';
+        }
+
+        return json_encode($response);
+    }
+
     /**
      * Edit presentation
      *
@@ -225,9 +274,9 @@ class Controller
     {
         $path     = $this->settings['presentation']['markdown'];
         $fileName = substr_replace($args['file'], '.', -3, 1);
-        $file     = $path . $fileName;
+        $filePath = $path . $fileName;
 
-        $form = new Form($file);
+        $form = new Form($filePath);
         if ($form->getForm()['error'] === true)
         {
             $form = ['message'    => $form->getForm()['message'],
@@ -241,12 +290,12 @@ class Controller
                     ];
         }
 
-        $file = new File($file);
+        $file = new File($filePath);
         if ($file->load() === false)
         {
             $flash = ['message'    => 'Error while loading file "'.
-                                      realpath($fileName).'".',
-                      'alert_type' => 'success'
+                                      $fileName.'".',
+                      'alert_type' => 'danger'
                      ];
             $this->flash->addMessage('flash', $flash);
 

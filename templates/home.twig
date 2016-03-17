@@ -1,3 +1,16 @@
 {% extends "layout.twig" %}
 
+{% block js %}
+  <script src="/js/script.js"></script>
+{% endblock %}
 
+{% block content %}
+
+    <span class="label label-success pull-right" id="broadcast">On-line</span>
+    <a href="javascript:window.location.reload()" class="btn btn-primary btn-xs pull-right" id="reconnect">Reconnect</a>
+
+    <!-- Begin page content -->
+    <div class="container" id="container">
+    </div> <!-- /container -->
+
+{% endblock %}

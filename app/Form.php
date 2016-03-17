@@ -22,6 +22,10 @@ class Form
 			$this->form['message'] = realpath($this->path).' is not writable. '.
 									 'Give write permissions.';
 		}
+		else if ($path !== null && is_writable($path) === true)
+		{
+			$this->path = $path;
+		}
 	}
 
 	public function getForm()

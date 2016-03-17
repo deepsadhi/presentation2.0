@@ -23,6 +23,12 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/', Controller::class.':admin')
 	     ->setName('admin')->add(new Guard);
 
+	$this->get('/presentation/{file}/show', Controller::class.':show')
+		 ->setName('show');
+
+	$this->get('/presentation/{file}/slide/{slide}', Controller::class.':json')
+		->setName('json');
+
 	// Form to to create presentation file
 	$this->get('/presentation/create', Controller::class.':create')
 	     ->setName('create')->add(new Guard);

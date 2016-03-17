@@ -97,7 +97,7 @@ class Slide
 
 		$msg = array('prev' => $this->prev, 'next' => $this->next,
 		             'slide' => $slide, 'count' => ($this->_slideCount - 1));
-		$msg = json_encode($msg);
+		// $msg = json_encode($msg);
 
 		return $msg;
 	}

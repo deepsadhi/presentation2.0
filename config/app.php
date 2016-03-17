@@ -12,7 +12,7 @@ return [
 
         // Theme settings
         'theme' => [
-            'name' => 'bootswatch/lumen',
+            'name' => 'bootswatch/paper',
         ],
 
         // Sqlite database to store credentials

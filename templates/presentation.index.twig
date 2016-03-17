@@ -14,7 +14,7 @@
             {% for file in files %}
             <tr>
               <td>{{ i }}</td>
-              <td><a href="{{ path_for('edit', {'file': file.name}) }}">{{ file.name }}</a></td>
+              <td><a href="{{ path_for('show', {'file': file.name_}) }}">{{ file.name }}</a></td>
               <td>{{ file.size }}</td>
               <td>{{ file.date }}</td>
               <td>
