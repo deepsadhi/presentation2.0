@@ -1,7 +1,7 @@
 {% extends "layout.twig" %}
 
 {% block navbar %}
-{% include 'navbar.twig' %}
+{% include "admin/partials/navbar.twig" %}
 {% endblock %}
 
 {% block content %}
@@ -9,7 +9,7 @@
     <!-- Begin page content -->
     <div class="container">
 
-      {% include "flash.alert.twig" %}
+      {% include "admin/alert/flash.twig" %}
 
       <div class="row">
           <div class="well bs-component">
@@ -29,11 +29,11 @@
         </div>
       </div>
 
-      {% include "media.index.twig" %}
+      {% include "admin/index/media.twig" %}
 
     </div> <!-- /container -->
 
-    {% include "dialogbox.twig" %}
+    {% include "admin/alert/dialogbox.twig" %}
 
 
 {% endblock %}

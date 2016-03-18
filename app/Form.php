@@ -132,6 +132,8 @@ class Form
 	public function update($input)
 	{
 		$input['content']          = trim($input['content']);
+		$input['content'] 		   = str_replace("\r\n", PHP_EOL, $input['content']);
+		$input['content'] 		   = str_replace("\n", PHP_EOL, $input['content']);
 		$this->form['input_value'] = $input;
 
 		if (empty($input['content']))

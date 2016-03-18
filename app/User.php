@@ -9,36 +9,44 @@ class User
 {
 	/**
 	 * Database connection
+	 *
 	 * @var PDO object
 	 */
-	private static $_db;
+	protected static $db;
 
 	/**
 	 * Create database connection
 	 */
-	public static function connectDb()
+	public static function connectDatabase()
 	{
-		self::$_db = new Database;
+		self::$db = new Database;
+	}
+
+	/**
+	 * Hash password
+	 * @param  [type] $password [description]
+	 * @return [type]           [description]
+	 */
+	protected static function hashPassword($password)
+	{
+	    if (defined('CRYPT_BLOWFISH') && CRYPT_BLOWFISH)
+	    {
+	        $salt = '$2y$11$' . substr(md5(uniqid(rand(), true)), 0, 22);
+	        return crypt($password, $salt);
+	    }
 	}
 
 	/**
 	 * Verify user entered password match with correct password
 	 *
-	 * @param  string $actualPassword  User actual password
+	 * @param  string $hashedPassword    User actual password
 	 * @param  string $enterdPassword  User entered password
 	 *
 	 * @return bool                    Both password match or not
 	 */
-	private static function _verifyPassword($actualPassword, $enterdPassword)
+	protected static function verifyPassword($hashedPassword, $password)
 	{
-		if ($actualPassword == $enterdPassword)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return crypt($password, $hashedPassword) == $hashedPassword;
 	}
 
 
@@ -53,16 +61,16 @@ class User
 	 */
 	public static function login($username, $password)
 	{
-		self::connectDb();
+		self::connectDatabase();
 
-		$data = ['type' => 'STR', 'key' => 'username', 'value' => $username];
+		$data = [['type' => 'STR', 'key' => 'username', 'value' => $username]];
 
-		if (self::$_db->getValueOf('users', $data))
+		if (self::$db->query('users', $data))
 		{
-			if (self::$_db->rowCount > 0)
+			if (self::$db->rowCount > 0)
 			{
-				$actualPassword = self::$_db->result['password'];
-				if (self::_verifyPassword($actualPassword, $password) === true)
+				$hashedPassword = self::$db->result['password'];
+				if (self::verifyPassword($hashedPassword, $password) === true)
 				{
 					$_SESSION['user'] = $username;
 					return true;
@@ -75,18 +83,13 @@ class User
 
 	public static function changeUserPass($username, $password)
 	{
-		$data = [['type' => 'STR', 'key' => 'username', 'value' => $username],
-				 ['type' => 'STR', 'key' => 'password', 'value' => $password]
-				];
+		self::connectDatabase();
 
-		if (self::$_db->changeUserPass('users', $data))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		$password = self::hashPassword($password);
+		$data     = [['type' => 'STR', 'key' => 'username', 'value' => $username],
+				     ['type' => 'STR', 'key' => 'password', 'value' => $password]];
+
+		return self::$db->update('users', $data, 1);
 	}
 
 	/**
@@ -103,20 +106,18 @@ class User
 	/**
 	 * Check user is logged in or not
 	 *
-	 * @return bool User session existed or not
+	 * @return bool User session exists or not
 	 */
 	public static function authenticate()
 	{
-		if (!isset($_SESSION['user']))
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return isset($_SESSION['user']);
 	}
 
+	/**
+	 * Get username of registered session user
+	 *
+	 * @return string|null Username of registered session user
+	 */
 	public static function getUserName()
 	{
 		return (isset($_SESSION['user'])) ? $_SESSION['user'] : null;

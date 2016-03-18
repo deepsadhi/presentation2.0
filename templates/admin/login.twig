@@ -24,7 +24,7 @@
             <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
             <fieldset>
 
-              {% include "form.alert.twig" %}
+              {% include "admin/alert/form.twig" %}
 
               <div class="{{ form.error ? 'has-error' : '' }}">
                 <label class="control-label">Username</label>

@@ -69,7 +69,7 @@ class Controller
     	         'alert_type' => 'info',
     	        ];
 
-		return $this->view->render($response, 'login.twig', [
+		return $this->view->render($response, 'admin/login.twig', [
 		    'form' 		 => $form,
 			'csrf_name'  => $request->getAttribute('csrf_name'),
 			'csrf_value' => $request->getAttribute('csrf_value'),
@@ -100,7 +100,7 @@ class Controller
     				 'input_value' => ['username' => $username],
     				];
 
-    		return $this->view->render($response, 'login.twig', [
+    		return $this->view->render($response, 'admin/login.twig', [
     			'form'       => $form,
     			'csrf_name'  => $request->getAttribute('csrf_name'),
     			'csrf_value' => $request->getAttribute('csrf_value'),
@@ -135,7 +135,7 @@ class Controller
         $data['files']       = $files;
         $data['active_page'] = 'home';
 
-        return $this->view->render($response, 'admin.twig', $data);
+        return $this->view->render($response, 'admin/admin.twig', $data);
     }
 
     /**
@@ -163,7 +163,7 @@ class Controller
                     ];
         }
 
-        return $this->view->render($response, 'create.twig', [
+        return $this->view->render($response, 'admin/create.twig', [
             'form'        => $form,
             'csrf_name'   => $request->getAttribute('csrf_name'),
             'csrf_value'  => $request->getAttribute('csrf_value'),
@@ -195,10 +195,9 @@ class Controller
         {
             if ($form->store($input, $file) === true)
             {
-                $flash = ['message'    => 'Presentation created successfully.',
-                          'alert_type' => 'success'
-                         ];
-                $this->flash->addMessage('flash', $flash);
+                $this->flash->addMessage('message',
+                                         'Presentation created successfully.');
+                $this->flash->addMessage('alert_type', 'success');
 
                 return $response->withRedirect('/admin/');
             }
@@ -206,7 +205,7 @@ class Controller
 
         $form               = $form->getForm();
         $form['alert_type'] = 'danger';
-        return $this->view->render($response, 'create.twig', [
+        return $this->view->render($response, 'admin/create.twig', [
             'form'        => $form,
             'csrf_name'   => $request->getAttribute('csrf_name'),
             'csrf_value'  => $request->getAttribute('csrf_value'),
@@ -233,7 +232,7 @@ class Controller
             return $response->withRedirect('/admin/');
         }
 
-        return $this->view->render($response, 'show.twig');
+        return $this->view->render($response, 'admin/show.twig');
     }
 
     /**
@@ -301,11 +300,9 @@ class Controller
         $file = new File($filePath);
         if ($file->load() === false)
         {
-            $flash = ['message'    => 'Error while loading file "'.
-                                      $fileName.'".',
-                      'alert_type' => 'danger'
-                     ];
-            $this->flash->addMessage('flash', $flash);
+            $this->flash->addMessage('message',
+                                     'Error while loading file "'.$fileName.'".');
+            $this->flash->addMessage('alert_type', 'danger');
 
             return $response->withRedirect('/admin/');
         }
@@ -320,7 +317,7 @@ class Controller
                  'csrf_value' => $request->getAttribute('csrf_value'),
                 ];
 
-        return $this->view->render($response, 'edit.twig', $data);
+        return $this->view->render($response, 'admin/edit.twig', $data);
     }
 
     /**
@@ -349,10 +346,9 @@ class Controller
         {
             if ($form->update($input) === true)
             {
-                $flash = ['message'    => 'Presentation updated successfully.',
-                          'alert_type' => 'success'
-                         ];
-                $this->flash->addMessage('flash', $flash);
+                $this->flash->addMessage('message',
+                                         'Presentation updated successfully.');
+                $this->flash->addMessage('alert_type', 'success');
 
                 return $response->withRedirect('/admin/');
             }
@@ -360,7 +356,7 @@ class Controller
 
         $form               = $form->getForm();
         $form['alert_type'] = 'danger';
-        return $this->view->render($response, 'edit.twig', [
+        return $this->view->render($response, 'admin/edit.twig', [
             'form'        => $form,
             'file_name'   => $args['file'],
             'csrf_name'   => $request->getAttribute('csrf_name'),
@@ -416,7 +412,7 @@ class Controller
         $data['active_page'] = 'media';
 
 
-        return $this->view->render($response, 'media.twig', $data);
+        return $this->view->render($response, 'admin/media.twig', $data);
     }
 
     /**
@@ -463,7 +459,7 @@ class Controller
                  'alert_type'  => 'info',
                 ];
 
-        return $this->view->render($response, 'settings.twig', [
+        return $this->view->render($response, 'admin/settings.twig', [
             'form'        => $form,
             'csrf_name'   => $request->getAttribute('csrf_name'),
             'csrf_value'  => $request->getAttribute('csrf_value'),
@@ -495,7 +491,7 @@ class Controller
             $form               = $form->getForm();
             $form['alert_type'] = 'danger';
 
-            return $this->view->render($response, 'settings.twig', [
+            return $this->view->render($response, 'admin/settings.twig', [
                 'form'        => $form,
                 'csrf_name'   => $request->getAttribute('csrf_name'),
                 'csrf_value'  => $request->getAttribute('csrf_value'),

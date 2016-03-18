@@ -23,9 +23,11 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/', Controller::class.':admin')
 	     ->setName('admin')->add(new Guard);
 
+	// Show and present presentation
 	$this->get('/presentation/{file}/show', Controller::class.':show')
 		 ->setName('show');
 
+	// Get presentation slide in json format
 	$this->get('/presentation/{file}/slide/{slide}', Controller::class.':json')
 		->setName('json');
 

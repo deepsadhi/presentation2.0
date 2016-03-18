@@ -1,7 +1,7 @@
 {% extends "layout.twig" %}
 
 {% block navbar %}
-{% include "navbar.twig" %}
+{% include "admin/partials/navbar.twig" %}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
               <input type="hidden" name="_METHOD" value="PUT">
               <fieldset>
 
-                {% include "form.alert.twig" %}
+                {% include "admin/alert/form.twig" %}
 
                 <div class="{{ form.invalid_input.title ? 'has-error' : '' }}">
                   <label class="control-label">Presentation file</label>

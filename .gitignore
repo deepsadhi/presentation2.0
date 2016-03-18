@@ -1,6 +1,6 @@
 /vendor
 /tmp
-/cache
+/cache/*
 *.sublime-project
 *.sublime-workspace
 *~

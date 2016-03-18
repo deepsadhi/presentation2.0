@@ -21,7 +21,6 @@ $container['view'] = function ($container) use ($app) {
         $settings['template_path'],
         [
         	// 'cache' => $settings['cache_path']
-            'my_name' => 'deepak'
         ]
     );
     $view->addExtension(new TwigExtension(
