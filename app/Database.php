@@ -2,10 +2,9 @@
 
 namespace App;
 
-use App\Sqlite;
 use \PDO;
-use \PDOException;
-use \Exception;
+use App\Sqlite;
+
 
 class Database
 {
@@ -24,21 +23,23 @@ class Database
     protected $stmt;
 
     /**
-     * Store SQL query result
+     * Store SQL query results
      *
      * @var array
      */
-    public $result;
+    public $rows;
 
     /**
-     * Store count of SQL query
+     * Store count of SQL query results
      *
-     * @var [type]
+     * @var int
      */
     public $rowCount;
 
+
     /**
-     * Initialize database
+     * Establish database connection
+     * Make SQL query results empty
      */
     public function __construct()
     {
@@ -47,41 +48,40 @@ class Database
         $this->initQuery();
     }
 
-
     /**
-     * Get SQL query result row count
+     * Get SQL query results row count
      *
-     * @return int Count of SQL query result
+     * @return int Count of SQL query results
      */
     public function getRowCount()
     {
         return $this->rowCount;
     }
 
-
     /**
      * Get SQL query result
      *
      * @return array SQL query result
      */
-    public function getResult()
+    public function getRows()
     {
-        return $this->result;
+        return $this->rows;
     }
 
-
     /**
-     * Initialize query
+     * Initialize query result
      * Set $result to empty array
-     *
-     * @return [type] [descriptio
      */
     protected function initQuery()
     {
-        $this->result = [];
+        $this->rows = [];
     }
 
-
+    /**
+     * Bind data value to parameter
+     *
+     * @param array $data Data for SQL query
+     */
     protected function bind(array $data)
     {
         foreach($data as $d)
@@ -101,7 +101,14 @@ class Database
         }
     }
 
-
+    /**
+     * Update row of a table
+     *
+     * @param  string $table Table name
+     * @param  array  $data  Data to be updated
+     * @param  int    $id    Id of the row
+     * @return bool          Update successfully executed or not
+     */
     public function update($table, array $data, $id)
     {
         try
@@ -109,11 +116,11 @@ class Database
             $args = [];
             foreach ($data as $d)
             {
-                $args[] = $d['key']. ' = :' .$d['key'];
+                $args[] = $d['key'] . ' = :' .$d['key'];
             }
 
-            $sql = 'UPDATE '.$table.' SET '. implode(', ', $args).
-                   ' WHERE id = `'. $id .'`';
+            $sql = 'UPDATE ' . $table . ' SET ' . implode(', ', $args).
+                   ' WHERE id = ' . $id;
 
             $this->stmt = $this->db->prepare($sql);
             $this->bind($data);
@@ -123,42 +130,45 @@ class Database
         }
         catch (PDOException $e)
         {
-            // throw new Exception($e->getMessage());
             return false;
         }
     }
 
-
-    public function query($table, array $data)
+    /**
+     * Query record in table
+     *
+     * @param  string $table Table name
+     * @param  array  $data  Data to be queried
+     * @return bool          Query successfully executed or not
+     */
+    public function query($table, array $data, $limit = null)
     {
         try
         {
             $args = [];
             foreach ($data as $d)
             {
-                $args[] = $d['key']. ' = :' .$d['key'];
+                $args[] = $d['key'] . ' = :' .$d['key'];
             }
 
-            $sql  = 'SELECT * FROM '.$table . ' WHERE ' .
-                    implode(' AND ', $args) . ' LIMIT 1';
+            $sql  = 'SELECT * FROM ' . $table . ' WHERE ' .
+                    implode(' AND ', $args);
+            if (!null)
+            {
+                $sql .= ' LIMIT ' . $limit;
+            }
 
             $this->stmt = $this->db->prepare($sql);
             $this->bind($data);
             $this->stmt->execute();
 
-            $this->result   = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-            $this->rowCount = count($this->result);
-
-            if ($this->rowCount > 0)
-            {
-                $this->result = array_shift($this->result);
-            }
+            $this->rows     = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+            $this->rowCount = count($this->rows);
 
             return true;
         }
         catch (PDOException $e)
         {
-            // throw new Exception($e->getMessage());
             return false;
         }
     }

@@ -155,7 +155,7 @@ class Form
 		return false;
 	}
 
-	public function updateUserPass(Array $input)
+	public function updateUsernameAndPassword(Array $input)
 	{
 		$input['new_username']     = trim($input['new_username']);
 		$this->form['input_value'] = $input;
@@ -209,7 +209,7 @@ class Form
 				return false;
 			}
 
-			if (User::changeUserPass($input['new_username'], $input['new_password']))
+			if (User::updateUsernameAndPassword($input['new_username'], $input['new_password']))
 			{
 				$this->form['message'] = 'Username and password changed successfully.';
 				return true;

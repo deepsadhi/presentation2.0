@@ -1,10 +1,9 @@
 <?php
 
-use App\File;
-use Slim\Csrf\Guard;
-use App\Form;
-use App\Controller;
 use App\User;
+use App\Controller;
+use Slim\Csrf\Guard;
+
 
 // Home page
 $app->get('/', Controller::class.':home');
@@ -56,12 +55,12 @@ $app->group('/admin', function () use ($app) {
 	// Upload media file
 	$this->post('/media', Controller::class.':media');
 
-	// Form to update username and password
-	$this->get('/settings', Controller::class.':editUserPass')
+	// Form to update change settings
+	$this->get('/settings', Controller::class.':editSettings')
 		 ->setName('settings')->add(new Guard);
 
-	// Update username and password
-	$this->put('/settings', Controller::class.':updateUserPass');
+	// Update settings
+	$this->put('/settings', Controller::class.':updateSettings');
 
 })->add(function ($request, $response, $next) {
 	if (User::authenticate() === false)
@@ -73,8 +72,7 @@ $app->group('/admin', function () use ($app) {
 	return $response;
 });
 
-
-// Logout page
+// Logout
 $app->get('/logout', function($request, $response) {
 	User::logout();
 

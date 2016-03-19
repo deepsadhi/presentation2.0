@@ -14,8 +14,10 @@ if (PHP_SAPI == 'cli-server') {
 }
 
 
+// Store public path
 define('PUBLIC_PATH', getcwd());
 
+// Initialize app
 $app = require __DIR__ . '/../app/bootstrap.php';
 
 // Run app

@@ -3,7 +3,7 @@
 namespace App;
 
 use App\Database;
-use App\Session;
+
 
 class User
 {
@@ -14,8 +14,9 @@ class User
 	 */
 	protected static $db;
 
+
 	/**
-	 * Create database connection
+	 * Establish database connection
 	 */
 	public static function connectDatabase()
 	{
@@ -23,9 +24,10 @@ class User
 	}
 
 	/**
-	 * Hash password
-	 * @param  [type] $password [description]
-	 * @return [type]           [description]
+	 * Hash password using Blowfish
+	 *
+	 * @param  string $password Plain password
+	 * @return string           Hashed password
 	 */
 	protected static function hashPassword($password)
 	{
@@ -37,27 +39,26 @@ class User
 	}
 
 	/**
-	 * Verify user entered password match with correct password
+	 * Verify plain password matches with hashed password
 	 *
-	 * @param  string $hashedPassword    User actual password
-	 * @param  string $enterdPassword  User entered password
-	 *
-	 * @return bool                    Both password match or not
+	 * @param  string $hashedPassword Hashed password
+	 * @param  string $password       Plain password
+	 * @return string                 Plain password and hashed password
+	 *                                matches or not
 	 */
 	protected static function verifyPassword($hashedPassword, $password)
 	{
 		return crypt($password, $hashedPassword) == $hashedPassword;
 	}
 
-
 	/**
 	 * Check entered username and password is valid or not
 	 * Fetch username and password from database
-	 * Register if authentication is valid
+	 * Register session if authentication is valid
 	 *
 	 * @param  string $username Entered username
 	 * @param  string $password Entered password
-	 * @return bool             Authentication was valid or not
+	 * @return bool             Authentication valid or not
 	 */
 	public static function login($username, $password)
 	{
@@ -65,11 +66,13 @@ class User
 
 		$data = [['type' => 'STR', 'key' => 'username', 'value' => $username]];
 
-		if (self::$db->query('users', $data))
+		if (self::$db->query('users', $data, 1) === true)
 		{
-			if (self::$db->rowCount > 0)
+			if (self::$db->getRowCount() == 1)
 			{
-				$hashedPassword = self::$db->result['password'];
+				$result         = self::$db->getRows();
+				$result         = array_shift($result);
+				$hashedPassword = $result['password'];
 				if (self::verifyPassword($hashedPassword, $password) === true)
 				{
 					$_SESSION['user'] = $username;
@@ -81,7 +84,14 @@ class User
 		return false;
 	}
 
-	public static function changeUserPass($username, $password)
+	/**
+	 * Change username and password
+	 *
+	 * @param  string $username New username
+	 * @param  string $password New password
+	 * @return bool             Username and password change successful or not
+	 */
+	public static function updateUsernameAndPassword($username, $password)
 	{
 		self::connectDatabase();
 
@@ -89,7 +99,7 @@ class User
 		$data     = [['type' => 'STR', 'key' => 'username', 'value' => $username],
 				     ['type' => 'STR', 'key' => 'password', 'value' => $password]];
 
-		return self::$db->update('users', $data, 1);
+		return  self::$db->update('users', $data, 1);
 	}
 
 	/**
@@ -101,7 +111,6 @@ class User
 		unset($_SESSION);
 		session_regenerate_id(true);
 	}
-
 
 	/**
 	 * Check user is logged in or not
@@ -124,5 +133,3 @@ class User
 	}
 
 }
-
-

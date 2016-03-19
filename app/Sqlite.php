@@ -3,8 +3,7 @@
 namespace App;
 
 use \PDO;
-use \RuntimeException;
-use \PDOException;
+
 
 class Sqlite
 {
@@ -13,35 +12,33 @@ class Sqlite
      *
      * @var object
      */
-    private static $_db;
+    protected static $db;
 
     /**
      * Protect from cloning
      */
-    private function __clone() {}
+    protected function __clone() {}
 
     /**
      * Protect from wakeup
      */
-    private function __wakeup() {}
+    protected function __wakeup() {}
 
     /**
      * Create Sqlite connection
      */
-    private function __construct(){
+    protected function __construct(){
         try
         {
             $settings = require __DIR__ . '/../config/app.php';
             $file     = __DIR__ . '/../config/' .
                         $settings['settings']['sqlite']['filename'];
 
-            self::$_db = new PDO('sqlite:' . $file);
-            self::$_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$db = new PDO('sqlite:' . $file);
+            self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
-
-        catch(\PDOException $e)
+        catch(PDOException $e)
         {
-            throw new RuntimeException($e->getMessage(), 100);
         }
     }
 
@@ -52,11 +49,11 @@ class Sqlite
      * @return object PDO object
      */
      public static function getConnection(){
-        if (!self::$_db)
+        if (!self::$db)
         {
             new self();
         }
 
-        return self::$_db;
+        return self::$db;
     }
 }

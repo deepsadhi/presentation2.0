@@ -13,29 +13,29 @@ class Controller
     /**
      * Store Twig view
      *
-     * @var [type]
+     * @var Twig object
      */
 	protected $view;
 
     /**
      * Store Slim flash messages
      *
-     * @var [type]
+     * @var Messages object
      */
     protected $flash;
 
     /**
      * Store Slim app container
      *
-     * @var [type]
+     * @var App container object
      */
     protected $container;
 
 
     /**
-     * Initialize container
+     * Initialize controller
      *
-     * @param [type] $container [description]
+     * @param object $container App container object
      */
 	public function __construct($container)
 	{
@@ -47,9 +47,9 @@ class Controller
     /**
      * Home page
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function home(Request $request, Response $response)
     {
@@ -59,15 +59,14 @@ class Controller
     /**
      * Login page
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function login(Request $request, Response $response)
     {
     	$form = ['message'    => 'Enter username and password.',
-    	         'alert_type' => 'info',
-    	        ];
+    	         'alert_type' => 'info'];
 
 		return $this->view->render($response, 'admin/login.twig', [
 		    'form' 		 => $form,
@@ -79,9 +78,9 @@ class Controller
     /**
      * Authenticate login
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function authenticate(Request $request, Response $response)
     {
@@ -111,9 +110,9 @@ class Controller
     /**
      * List of presentations
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function admin(Request $request, Response $response)
     {
@@ -141,9 +140,9 @@ class Controller
     /**
      * Create presentation
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function create(Request $request, Response $response)
     {
@@ -153,14 +152,12 @@ class Controller
         if ($form->getForm()['error'] === true)
         {
             $form = ['message'    => $form->getForm()['message'],
-                     'alert_type' => 'danger',
-                    ];
+                     'alert_type' => 'danger'];
         }
         else
         {
             $form = ['message'    => $form->getForm()['message'],
-                     'alert_type' => 'info',
-                    ];
+                     'alert_type' => 'info'];
         }
 
         return $this->view->render($response, 'admin/create.twig', [
@@ -174,9 +171,9 @@ class Controller
     /**
      * Store presentation
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function store(Request $request, Response $response)
     {
@@ -188,15 +185,13 @@ class Controller
         if ($form->getForm()['error'] === true)
         {
             $form = ['message'    => $form->getForm()['message'],
-                     'alert_type' => 'danger',
-                    ];
+                     'alert_type' => 'danger'];
         }
         else
         {
             if ($form->store($input, $file) === true)
             {
-                $this->flash->addMessage('message',
-                                         'Presentation created successfully.');
+                $this->flash->addMessage('message',$form->getForm()['message']);
                 $this->flash->addMessage('alert_type', 'success');
 
                 return $response->withRedirect('/admin/');
@@ -213,6 +208,13 @@ class Controller
         ]);
     }
 
+    /**
+     * Show presentation
+     *
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
+     */
     public function show(Request $request, Response $response, Array $args)
     {
         $path     = $this->settings['presentation']['markdown'];
@@ -224,8 +226,7 @@ class Controller
         {
             $flash = ['message'    => 'Error while loading file "'.
                                       $fileName.'".',
-                      'alert_type' => 'danger'
-                     ];
+                      'alert_type' => 'danger'];
             $this->flash->addMessage('message', $flash['message']);
             $this->flash->addMessage('alert_type', $flash['alert_type']);
 
@@ -238,10 +239,10 @@ class Controller
     /**
      * Presentation slide as json
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @param  Array    $args     [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  Array    $args
+     * @return Response
      */
     public function json(Request $request, Response $response, Array $args)
     {
@@ -251,31 +252,31 @@ class Controller
         $slideNumber = (int) preg_replace('/\D/', '', $args['slide']);
 
         $file     = new File($filePath);
-        $response = [];
+        $data     = [];
 
         if ($file->load() === true)
         {
             $slide = new Slide($filePath);
 
-            $response['error'] = false;
-            $response['slide'] = $slide->renderForAjax($slideNumber);
+            $data['error'] = false;
+            $data['slide'] = $slide->renderForAjax($slideNumber);
         }
         else
         {
-            $response['error']   = true;
-            $response['message'] = 'Could not load presentation file.';
+            $data['error']   = true;
+            $data['message'] = 'Could not load presentation file.';
         }
 
-        return json_encode($response);
+        return $response->withJson($data);
     }
 
     /**
      * Edit presentation
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @param  Array    $args     [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  Array    $args
+     * @return Response
      */
     public function edit(Request $request, Response $response, Array $args)
     {
@@ -323,10 +324,10 @@ class Controller
     /**
      * Update presentation
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @param  Array    $args     [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  Array    $args
+     * @return Response
      */
     public function update(Request $request, Response $response, Array $args)
     {
@@ -368,9 +369,9 @@ class Controller
     /**
      * List of media files
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function media(Request $request, Response $response)
     {
@@ -418,9 +419,9 @@ class Controller
     /**
      * Delete media or presentation file
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
     public function delete(Request $request, Response $response)
     {
@@ -448,11 +449,11 @@ class Controller
     /**
      * Edit username and password
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
-    public function editUserPass(Request $request, Response $response)
+    public function editSettings(Request $request, Response $response)
     {
         $form = ['message'     => 'Enter details.',
                  'input_value' => ['new_username' => User::getUserName()],
@@ -470,16 +471,16 @@ class Controller
     /**
      * Update usernamde and password
      *
-     * @param  Request  $request  [description]
-     * @param  Response $response [description]
-     * @return [type]             [description]
+     * @param  Request  $request
+     * @param  Response $response
+     * @return Response
      */
-    public function updateUserPass(Request $request, Response $response)
+    public function updateSettings(Request $request, Response $response)
     {
         $input = $request->getParsedBody();
         $form = new Form;
 
-        if ($form->updateUserPass($input) === true)
+        if ($form->updateUsernameAndPassword($input) === true)
         {
             $this->flash->addMessage('message', $form->flash['message']);
             $this->flash->addMessage('alert_type', 'success');

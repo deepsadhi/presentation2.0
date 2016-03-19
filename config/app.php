@@ -2,7 +2,8 @@
 
 return [
     'settings' => [
-        'displayErrorDetails' => true, // set to false in production
+        // Display errors
+        'displayErrorDetails' => true,
 
         // Renderer settings
         'renderer' => [
@@ -20,10 +21,10 @@ return [
             'filename' => 'app.db',
         ],
 
+        // Directory to store presentation and media files
         'presentation' => [
             'media'     => PUBLIC_PATH . '/media/',
             'markdown'  => __DIR__ . '/../markdown/',
         ],
-
     ],
 ];

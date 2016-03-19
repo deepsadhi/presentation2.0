@@ -1,12 +1,12 @@
 <?php
-// DIC configuration
-
-use Slim\Flash\Messages;
-use Slim\Views\Twig;
-use Slim\Views\TwigExtension;
 
 use App\Controller;
+use Slim\Views\Twig;
+use Slim\Flash\Messages;
+use Slim\Views\TwigExtension;
 
+
+// Get app container
 $container = $app->getContainer();
 
 // Register flash message on container
@@ -14,7 +14,7 @@ $container['flash'] = function () {
     return new Messages();
 };
 
-// Register component on container
+// Register twig view on container
 $container['view'] = function ($container) use ($app) {
     $settings = $container->get('settings')['renderer'];
     $view = new Twig(
@@ -49,5 +49,3 @@ $container['view'] = function ($container) use ($app) {
 $container[Controller::class] = function ($container) {
     return new Controller($container);
 };
-
-
