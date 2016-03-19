@@ -8,7 +8,7 @@
 
     <!-- Begin page content -->
     <div class="container">
-        <div class="col-lg-8 col-md-offset-2">
+        <div class="col-lg-10 col-md-offset-1">
           <div class="row">
             <form class="form-horizontal" action="{{ path_for('edit', {'file': file_name}) }}" method="POST" enctype="multipart/form-data">
               <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">
@@ -26,12 +26,19 @@
                 <div class="{{ form.invalid_input.content ? 'has-error' : '' }}">
                   <label class="control-label">Enter presentation contents in Markdown syntax</label>
                   <div>
-                    <textarea class="form-control" name="content" rows="12">{{ form.input_value.content ?? '' }}</textarea>
+                    <textarea class="form-control" name="content" rows="10">{{ form.input_value.content ?? '' }}</textarea>
                     {% if form.input_message.content %}
                       <span class="help-block">
                           <strong>{{ form.input_message.content }}</strong>
                       </span>
                     {% endif %}
+                    <span>
+                      Write presentation content in
+                      <a target="_blank" href="http://daringfireball.net/projects/markdown/">Markdown</a>,
+                      <a target="_blank" href="https://help.github.com/categories/writing-on-github/">GitHub flavored Markdown</a> or
+                      <a target="_blank" href="https://michelf.ca/projects/php-markdown/extra/">Markdown with Extra extension</a> <br>
+                      For details check Parsedown <a href="http://parsedown.org/" target="_blank">Markdown Parser</a>
+                    </span>
                   </div>
                 </div>
 

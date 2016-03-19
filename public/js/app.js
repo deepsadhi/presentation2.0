@@ -16,8 +16,8 @@ $("#prev").attr("disabled", true);
 (function() {
     $("#reconnect").hide();
     $("#stop").hide();
-    var conn = new WebSocket("ws://" + location.hostname + ":8080");
 
+    var conn = new WebSocket("ws://" + location.hostname + ":8080");
 
     conn.onopen = function(e) {
         msg = {
@@ -42,7 +42,6 @@ $("#prev").attr("disabled", true);
             $("#prev").attr("disabled", msg.prev);
         }
 
-
         if (msg.prev === "undefined") {
             $("#next").attr("disabled", true);
         } else {
@@ -58,17 +57,20 @@ $("#prev").attr("disabled", true);
 
     };
 
-
-
     $("#start").click(function() {
         active = true;
+
+        errorMsg = "<h1>Couldn't establish Web Socket connection :(</h1><br>\
+                    <h3>Check Presentation 2.0 Web Socket Daemon status.<h3><br>\
+                   ";
+
+        $("#container").html("<div id=\"slide\">" + errorMsg + "</div>");
 
         url      = location.href;
         path     = url.split("/");
         fileName = path[5];
         fileName = fileName.slice(0, -3) + ".md";
 
-        $("#container").html("<div id=\"slide\"></div>");
         msg = {
             "filename": fileName
         };
@@ -88,13 +90,12 @@ $("#prev").attr("disabled", true);
 
         $("#stop").hide();
         $("#start").show();
+
         active = false;
         loadSlide();
     });
 
     $("#prev").click(function() {
-
-
         if (active) {
             msg = {
                 "action": "prev"
@@ -102,14 +103,12 @@ $("#prev").attr("disabled", true);
             msg = JSON.stringify(msg);
             conn.send(msg);
         } else {
-
             if (slideNumber > 0) {
                 slideNumber--;
                 loadSlide();
             }
         }
     });
-
 
     $("#next").click(function() {
         if (active) {
@@ -124,32 +123,23 @@ $("#prev").attr("disabled", true);
                 loadSlide();
             }
         }
-
     });
 
 })();
 
-
-
-
-
-
 $(document).keydown(function(e) {
     switch (e.which) {
         // Left key
-        case 37:
-        {
+        case 37: {
             $("#prev").trigger("click");
             break;
         }
         // Right key
-        case 39:
-        {
+        case 39: {
             $("#next").trigger("click");
             break;
         }
-        default:
-        {
+        default: {
             // exit this handler for other keys
             return;
         }
@@ -184,25 +174,26 @@ function loadSlide() {
     url = location.href;
     url = url.replace("show", "slide");
     url = url + "/" + slideNumber;
-    $.getJSON(url)
-        .done(function(data) {
-            if (data.error == false)
-            {
-                slideCount = data.slide.count;
 
-                $("#container").html(data.slide.slide);
-                $("#prev").attr("disabled", data.slide.prev);
-                $("#next").attr("disabled", data.slide.next);
-            }
-            else
-            {
-                $("#container").html("<h1>Error! on parsing file :(</h1><br>");
-            }
-        })
-        .fail(function(jqXHR, textStatus) {
-            $("#container").html("<h1>Could not load slide :(</h1> <br> <h3>" +
-                textStatus + "</h3>");
-        });
+    $.getJSON(url)
+    .done(function(data) {
+        if (data.error == false)
+        {
+            slideCount = data.slide.count;
+
+            $("#container").html(data.slide.slide);
+            $("#prev").attr("disabled", data.slide.prev);
+            $("#next").attr("disabled", data.slide.next);
+        }
+        else
+        {
+            $("#container").html("<h1>Error! on parsing file :(</h1><br>");
+        }
+    })
+    .fail(function(jqXHR, textStatus) {
+        $("#container").html("<h1>Could not load slide :(</h1> <br> <h3>" +
+            textStatus + "</h3>");
+    });
 }
 
 $(document).ready(function() {

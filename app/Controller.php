@@ -118,7 +118,7 @@ class Controller
     {
         $data  = [];
         $files = [];
-        $path  = $this->settings['presentation']['markdown'];
+        $path  = $this->settings['presentation']['presentation'];
         $file  = new File($path, '/^[a-zA-Z0-9_]*.', 'md|markdown');
 
         if ($file->ls() === false)
@@ -146,7 +146,7 @@ class Controller
      */
     public function create(Request $request, Response $response)
     {
-        $path = $this->settings['presentation']['markdown'];
+        $path = $this->settings['presentation']['presentation'];
         $form = new Form($path);
 
         if ($form->getForm()['error'] === true)
@@ -177,7 +177,7 @@ class Controller
      */
     public function store(Request $request, Response $response)
     {
-        $path  = $this->settings['presentation']['markdown'];
+        $path  = $this->settings['presentation']['presentation'];
         $form  = new Form($path);
         $file  = $request->getUploadedFiles()['file'];
         $input = $request->getParsedBody();
@@ -217,7 +217,7 @@ class Controller
      */
     public function show(Request $request, Response $response, Array $args)
     {
-        $path     = $this->settings['presentation']['markdown'];
+        $path     = $this->settings['presentation']['presentation'];
         $fileName = substr_replace($args['file'], '.', -3, 1);
         $filePath = $path . $fileName;
 
@@ -246,13 +246,12 @@ class Controller
      */
     public function json(Request $request, Response $response, Array $args)
     {
-        $path        = $this->settings['presentation']['markdown'];
+        $path        = $this->settings['presentation']['presentation'];
         $fileName    = substr_replace($args['file'], '.', -3, 1);
         $filePath    = $path . $fileName;
         $slideNumber = (int) preg_replace('/\D/', '', $args['slide']);
-
-        $file     = new File($filePath);
-        $data     = [];
+        $file        = new File($filePath);
+        $data        = [];
 
         if ($file->load() === true)
         {
@@ -280,7 +279,7 @@ class Controller
      */
     public function edit(Request $request, Response $response, Array $args)
     {
-        $path     = $this->settings['presentation']['markdown'];
+        $path     = $this->settings['presentation']['presentation'];
         $fileName = substr_replace($args['file'], '.', -3, 1);
         $filePath = $path . $fileName;
 
@@ -288,21 +287,20 @@ class Controller
         if ($form->getForm()['error'] === true)
         {
             $form = ['message'    => $form->getForm()['message'],
-                     'alert_type' => 'danger',
-                    ];
+                     'alert_type' => 'danger'];
         }
         else
         {
             $form = ['message'    => $form->getForm()['message'],
-                     'alert_type' => 'info',
-                    ];
+                     'alert_type' => 'info'];
         }
 
         $file = new File($filePath);
         if ($file->load() === false)
         {
             $this->flash->addMessage('message',
-                                     'Error while loading file "'.$fileName.'".');
+                                     'Error while loading file "' .
+                                     $fileName . '".');
             $this->flash->addMessage('alert_type', 'danger');
 
             return $response->withRedirect('/admin/');
@@ -331,7 +329,7 @@ class Controller
      */
     public function update(Request $request, Response $response, Array $args)
     {
-        $path     = $this->settings['presentation']['markdown'];
+        $path     = $this->settings['presentation']['presentation'];
         $fileName = substr_replace($args['file'], '.', -3, 1);
         $file     = $path . $fileName;
         $form     = new Form($file);
@@ -340,8 +338,7 @@ class Controller
         if ($form->getForm()['error'] === true)
         {
             $form = ['message'    => $form->getForm()['message'],
-                     'alert_type' => 'danger',
-                    ];
+                     'alert_type' => 'danger'];
         }
         else
         {
@@ -378,7 +375,7 @@ class Controller
         $data  = [];
         $files = [];
         $path  = $this->settings['presentation']['media'];
-        $file  = new File($path, '/', 'png|jpg|jpeg|bmp|gif');
+        $file  = new File($path, '/', 'png|jpg|jpeg|bmp|gif|svg');
 
         if ($_POST)
         {
@@ -387,8 +384,8 @@ class Controller
 
             if ($form->uploadMedia($inpFile) === true)
             {
-                $data['flash'] = ['message'    => 'Media uploaded successfully.',
-                                  'alert_type' => 'success'];
+                $data['flash'] = ['message'   => 'Media uploaded successfully.',
+                                  'alert_type'=> 'success'];
             }
             else
             {
@@ -411,7 +408,6 @@ class Controller
         $data['csrf_name']   = $request->getAttribute('csrf_name');
         $data['csrf_value']  = $request->getAttribute('csrf_value');
         $data['active_page'] = 'media';
-
 
         return $this->view->render($response, 'admin/media.twig', $data);
     }
@@ -436,7 +432,7 @@ class Controller
         $this->flash->addMessage('message', $file->getMessage());
         $this->flash->addMessage('alert_type', $alertType);
 
-        if ($path == 'markdown')
+        if ($path == 'presentation')
         {
             return $response->withRedirect('/admin/');
         }
@@ -457,8 +453,7 @@ class Controller
     {
         $form = ['message'     => 'Enter details.',
                  'input_value' => ['new_username' => User::getUserName()],
-                 'alert_type'  => 'info',
-                ];
+                 'alert_type'  => 'info'];
 
         return $this->view->render($response, 'admin/settings.twig', [
             'form'        => $form,

@@ -104,10 +104,10 @@ class Database
     /**
      * Update row of a table
      *
-     * @param  string $table Table name
-     * @param  array  $data  Data to be updated
-     * @param  int    $id    Id of the row
-     * @return bool          Update successfully executed or not
+     * @param  string  $table Table name
+     * @param  array   $data  Data to be updated
+     * @param  int     $id    Id of the row
+     * @return boolean        Update successfully executed or not
      */
     public function update($table, array $data, $id)
     {
@@ -137,9 +137,9 @@ class Database
     /**
      * Query record in table
      *
-     * @param  string $table Table name
-     * @param  array  $data  Data to be queried
-     * @return bool          Query successfully executed or not
+     * @param  string  $table Table name
+     * @param  array   $data  Data to be queried
+     * @return boolean        Query successfully executed or not
      */
     public function query($table, array $data, $limit = null)
     {

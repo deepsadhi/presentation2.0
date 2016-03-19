@@ -22,7 +22,7 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/', Controller::class.':admin')
 	     ->setName('admin')->add(new Guard);
 
-	// Show and present presentation
+	// Show and broadcast presentation
 	$this->get('/presentation/{file}/show', Controller::class.':show')
 		 ->setName('show');
 
@@ -37,7 +37,7 @@ $app->group('/admin', function () use ($app) {
 	// Store presentation content in a file
 	$this->post('/presentation/create', Controller::class.':store');
 
-	// Form to to create presentation file
+	// Form to to edit presentation file
 	$this->get('/presentation/{file}/edit', Controller::class.':edit')
 	     ->setName('edit')->add(new Guard);
 
@@ -48,14 +48,14 @@ $app->group('/admin', function () use ($app) {
 	$this->delete('/file', Controller::class.':delete')
 		 ->setName('file');
 
-	// List of media file for presentations
+	// List of media file
 	$this->get('/media', Controller::class.':media')
 		->setName('media')->add(new Guard);
 
 	// Upload media file
 	$this->post('/media', Controller::class.':media');
 
-	// Form to update change settings
+	// Form to update settings
 	$this->get('/settings', Controller::class.':editSettings')
 		 ->setName('settings')->add(new Guard);
 
@@ -63,6 +63,7 @@ $app->group('/admin', function () use ($app) {
 	$this->put('/settings', Controller::class.':updateSettings');
 
 })->add(function ($request, $response, $next) {
+	// Check user session exists or not
 	if (User::authenticate() === false)
 	{
 		$response = $response->withRedirect('/login');

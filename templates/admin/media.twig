@@ -12,6 +12,12 @@
       {% include "admin/alert/flash.twig" %}
 
       <div class="row">
+        <div class="alert alert-info">
+          <p>List of only png, jpg, jpeg, bmp, gif or svg files.</p>
+        </div>
+      </div>
+
+      <div class="row">
           <div class="well bs-component">
             <form class="form-horizontal" enctype="multipart/form-data" action="" method="POST">
               <input type="hidden" value="{{ csrf_value }}" name="{{ csrf_name }}">

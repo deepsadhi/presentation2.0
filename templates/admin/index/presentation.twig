@@ -19,7 +19,7 @@
               <td>{{ file.date }}</td>
               <td>
                 <a href="{{ path_for('edit', {'file': file.name_}) }}" class="btn btn-primary btn-xs">edit</a>
-                <a class="btn btn-danger btn-xs" data-target="#confirm-delete" data-toggle="modal" data-file="{{ file.name }}" data-path="markdown" href="#">Delete</a>
+                <a class="btn btn-danger btn-xs" data-target="#confirm-delete" data-toggle="modal" data-file="{{ file.name }}" data-path="presentation" href="#">Delete</a>
               </td>
             </tr>
             {% set i = i + 1 %}

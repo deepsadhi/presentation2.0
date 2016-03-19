@@ -56,9 +56,9 @@ class User
 	 * Fetch username and password from database
 	 * Register session if authentication is valid
 	 *
-	 * @param  string $username Entered username
-	 * @param  string $password Entered password
-	 * @return bool             Authentication valid or not
+	 * @param  string  $username Entered username
+	 * @param  string  $password Entered password
+	 * @return boolean           Authentication valid or not
 	 */
 	public static function login($username, $password)
 	{
@@ -87,9 +87,9 @@ class User
 	/**
 	 * Change username and password
 	 *
-	 * @param  string $username New username
-	 * @param  string $password New password
-	 * @return bool             Username and password change successful or not
+	 * @param  string  $username New username
+	 * @param  string  $password New password
+	 * @return boolean           Username and password change successful or not
 	 */
 	public static function updateUsernameAndPassword($username, $password)
 	{
@@ -115,7 +115,7 @@ class User
 	/**
 	 * Check user is logged in or not
 	 *
-	 * @return bool User session exists or not
+	 * @return boolean User session exists or not
 	 */
 	public static function authenticate()
 	{

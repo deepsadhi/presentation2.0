@@ -28,7 +28,7 @@
                   </div>
                 </div>
                 <div class="{{ form.invalid_input.file ? 'has-error' : '' }}">
-                  <label class="control-label">Markdown file</label>
+                  <label class="control-label">Presentation file</label>
                   <div>
                     <input type="file" name="file">
                     {% if form.input_message.file %}
@@ -36,6 +36,15 @@
                           <strong>{{ form.input_message.file }}</strong>
                       </span>
                     {% endif %}
+                    <span>
+                      Upload
+                      <a target="_blank" href="http://daringfireball.net/projects/markdown/">Markdown</a>,
+                      <a target="_blank" href="https://help.github.com/categories/writing-on-github/">GitHub flavored Markdown</a> or
+                      <a target="_blank" href="https://michelf.ca/projects/php-markdown/extra/">Markdown with Extra extension</a>
+                      file. <br>
+                      Yup your GitHub Repo README file will work ;)<br>
+                      For details check Parsedown <a href="http://parsedown.org/" target="_blank">Markdown Parser</a>
+                    </span>
                   </div>
                 </div>
 

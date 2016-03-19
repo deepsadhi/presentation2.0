@@ -2,14 +2,33 @@
 
 namespace App;
 
-use \Exception;
 use App\User;
+use \Exception;
+
 
 class Form
 {
+	/**
+	 * Path of file or directory
+	 *
+	 * @var string
+	 */
 	protected $path;
+
+	/**
+	 * Store form details
+	 * error, message, input_value, input_message
+	 *
+	 * @var array
+	 */
 	protected $form = [];
 
+
+	/**
+	 * Initialize form
+	 *
+	 * @param string $path Path for file or directory
+	 */
 	public function __construct($path=null)
 	{
 		$this->form['error']   = false;
@@ -28,15 +47,25 @@ class Form
 		}
 	}
 
+	/**
+	 * Get form values
+	 * @return array Form values
+	 */
 	public function getForm()
 	{
 		return $this->form;
 	}
 
+	/**
+	 * Check filename exists at path or not
+	 * If it exists change the filename by prefixing filename with file number
+	 *
+	 * @param  string $fileName Filename of the file
+	 * @return sring            New filename of the file
+	 */
 	protected function getFileName($fileName)
 	{
 		$i = 1;
-
 		while (1)
 		{
 			if (!(file_exists($this->path . $fileName)))
@@ -49,6 +78,13 @@ class Form
 		}
 	}
 
+	/**
+	 * Upload file
+	 *
+	 * @param  object  $file     Slim fileUpload object
+	 * @param  string  $fileName Filename to be renamed after uploading
+	 * @return boolean           File upload successful or not
+	 */
 	protected function upload($file, $fileName = null)
 	{
 		if ($fileName === null)
@@ -65,7 +101,14 @@ class Form
 		return false;
 	}
 
-	public function store($input, $file)
+	/**
+	 * Create a markdown file and store presentation contents
+	 *
+	 * @param  array   $input Input values
+	 * @param  object  $file  Sim fileUpload object
+	 * @return boolean        Presentation creation successful or note
+	 */
+	public function store(Array $input, $file)
 	{
 		$input['title'] 		   = trim($input['title']);
 		$fileName                  = $input['title'].'.md';
@@ -129,7 +172,13 @@ class Form
 
 	}
 
-	public function update($input)
+	/**
+	 * Update presentation contents of markdown file
+	 *
+	 * @param  array $input Input values
+	 * @return booll        Update presentation contents successful or not
+	 */
+	public function update(Array $input)
 	{
 		$input['content']          = trim($input['content']);
 		$input['content'] 		   = str_replace("\r\n", PHP_EOL, $input['content']);
@@ -155,6 +204,12 @@ class Form
 		return false;
 	}
 
+	/**
+	 * Update username and password
+	 *
+	 * @param  Array   $input Input values
+	 * @return boolean        Update username password successful or not
+	 */
 	public function updateUsernameAndPassword(Array $input)
 	{
 		$input['new_username']     = trim($input['new_username']);
@@ -217,7 +272,12 @@ class Form
 		}
 	}
 
-
+	/**
+	 * Upload media files
+	 *
+	 * @param  object  $file Slim fileUpload object
+	 * @return boolean       Media file upload successful or not
+	 */
 	public function uploadMedia($file)
 	{
 		if (isset($_FILES['file']) && $_FILES['file']['size'] != 0)

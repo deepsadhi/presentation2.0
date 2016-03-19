@@ -23,8 +23,8 @@ return [
 
         // Directory to store presentation and media files
         'presentation' => [
-            'media'     => PUBLIC_PATH . '/media/',
-            'markdown'  => __DIR__ . '/../markdown/',
+            'media'         => @PUBLIC_PATH . '/media/',
+            'presentation'  => __DIR__ . '/../presentation/',
         ],
     ],
 ];

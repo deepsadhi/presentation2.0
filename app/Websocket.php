@@ -2,96 +2,198 @@
 
 namespace App;
 
-use Ratchet\MessageComponentInterface;
-use Ratchet\ConnectionInterface;
-
 use App\Slide;
-
-class WebSocket implements MessageComponentInterface {
-    private $_clients;
-
-    private $_slide;
-    private $_slidePath;
-    private $_slideLast;
-    private $_slideNumber;
-    private $_slideFileName;
-
-    private $_presenterActive;
-    private $_presenterResourcesId;
+use \Exception;
+use \SplObjectStorage;
+use Ratchet\ConnectionInterface;
+use Ratchet\MessageComponentInterface;
 
 
+class WebSocket implements MessageComponentInterface
+{
+    /**
+     * Store clients Web Socket connection
+     *
+     * @var SplObjectStorage
+     */
+    protected $clients;
+
+    /**
+     * Store Slide object
+     *
+     * @var object
+     */
+    protected $slide;
+
+    /**
+     * Store path of presentation file
+     *
+     * @var string
+     */
+    protected $slidePath;
+
+    /**
+     * Store contents of last active slide
+     *
+     * @var string
+     */
+    protected $slideLast;
+
+    /**
+     * Slide number
+     *
+     * @var int
+     */
+    protected $slideNumber;
+
+    /**
+     * Store filename of presentation file
+     *
+     * @var string
+     */
+    protected $slideFileName;
+
+    /**
+     * Presenters resource id
+     *
+     * @var array
+     */
+    protected $presenterResourcesId;
+
+
+    /**
+     * Initialize Web Socket connection
+     */
     public function __construct() {
-        $this->_clients              = new \SplObjectStorage;
-        $this->_slidePath            = APP_PATH.'/markdown/';
-        $this->_presenterResourcesId = array();
+        $settings = require APP_PATH . '/config/app.php';
+        $settings = $settings['settings'];
 
-        $this->_init();
+        $this->clients              = new SplObjectStorage;
+        $this->slidePath            = $settings['presentation']['presentation'];
+        $this->presenterResourcesId = [];
+
+        $this->init();
     }
 
-    private function _init()
+    /**
+     * Initialize presentation broadcast
+     * Send last active slide to all active Web Socket connections
+     */
+    protected function init()
     {
-        $this->_slide         = null;
-        $this->_slideLast     = '<h1>No active presentation.</h1><br><h3>Stay tuned.</h3>';
-        $this->_slideNumber   = -1;
-        $this->_slideFileName = null;
+        $this->slide         = null;
+        $this->slideLast     = '<h1>No active presentation.</h1><br>' .
+                               '<h3>Stay tuned ;)</h3>';
+        $this->slideNumber   = -1;
+        $this->slideFileName = null;
 
-        $this->_sendMessageToAll();
+        $this->sendMessageToAll();
     }
 
-    private function _stats()
+    /**
+     * Add presenter to presenter list
+     *
+     * @param int $resourceId ResourceId of presenter
+     */
+    protected function addPresenter($resourceId)
     {
-        echo 'Active presenter: '.count($this->_presenterResourcesId).'. ';
-        echo 'Active connections: '.count($this->_clients)."\n";
-    }
-
-    private function _addPresenter($resourceId)
-    {
-        if (!in_array($resourceId, $this->_presenterResourcesId))
+        if (!in_array($resourceId, $this->presenterResourcesId))
         {
-            $this->_presenterResourcesId[] = $resourceId;
+            $this->presenterResourcesId[] = $resourceId;
         }
     }
 
-    private function _removePresenter($resourceId)
+    /**
+     * Remove presenter from presenter list
+     *
+     * @param int $resourceId ResourceId of presenter
+     */
+    protected function removePresenter($resourceId)
     {
-        $key = array_search($resourceId, $this->_presenterResourcesId);
+        $key = array_search($resourceId, $this->presenterResourcesId);
         if ($key !== false)
         {
-            unset($this->_presenterResourcesId[$key]);
+            unset($this->presenterResourcesId[$key]);
         }
     }
 
-    private function _isPresenter($resourceId)
+    /**
+     * Check Web Socket Connection is presenter or not
+     *
+     * @param  int     $resourceId ResourceId for Web Socket connection
+     * @return boolean             Client is presenter or not
+     */
+    protected function isPresenter($resourceId)
     {
-        if (in_array($resourceId, $this->_presenterResourcesId))
+        return in_array($resourceId, $this->presenterResourcesId);
+    }
+
+    /**
+     * Send message ie slide content to all active Web Socket connections
+     */
+    protected function sendMessageToAll()
+    {
+        $msgForViewer    = ['slide' => $this->slideLast];
+        $msgForPresenter = ['slide' => $this->slideLast];
+
+        if ($this->slide != null)
         {
-            return true;
+            $msgForPresenter['prev'] = $this->slide->prev;
+            $msgForPresenter['next'] = $this->slide->next;
         }
-        else
+
+        $msgForViewer    = json_encode($msgForViewer);
+        $msgForPresenter = json_encode($msgForPresenter);
+
+        foreach ($this->clients as $client)
         {
-            return false;
+            if (!$this->isPresenter($client->resourceId))
+            {
+                $client->send($msgForViewer);
+            }
+            else
+            {
+                $client->send($msgForPresenter);
+            }
         }
     }
 
+    /**
+     * Stats of active Web Socket connections and presenters
+     */
+    protected function stats()
+    {
+        echo 'Active presenter: '   . count($this->presenterResourcesId).'. ';
+        echo 'Active connections: ' . count($this->clients) . "\n";
+    }
 
+    /**
+     * New Web Socket connection is opened
+     *
+     * @param  ConnectionInterface $conn The socket/connection that just
+     *                                   connected to your application
+     */
     public function onOpen(ConnectionInterface $conn) {
-        $this->_clients->attach($conn);
+        $this->clients->attach($conn);
 
-        if (!$this->_isPresenter($conn->resourceId))
+        if (!$this->isPresenter($conn->resourceId))
         {
-            $msg = array('slide' => $this->_slideLast);
+            $msg = ['slide' => $this->slideLast];
             $msg = json_encode($msg);
 
             $conn->send($msg);
         }
 
-        echo "\nNew connection! ({$conn->resourceId})\n";
-        $this->_stats();
+        echo "New connection! ({$conn->resourceId})\n";
+        $this->stats();
     }
 
-
-
-
+    /**
+     * Send message ie slide content to all active Web Socket connections
+     *
+     * @param  ConnectionInterface $from Sender Web Socket connection
+     * @param  string              $msg  Slide content
+     */
     public function onMessage(ConnectionInterface $from, $msg) {
         $msg = json_decode($msg, true);
 
@@ -99,100 +201,75 @@ class WebSocket implements MessageComponentInterface {
         {
             if ($msg['presenter'] == 'true')
             {
-                $this->_addPresenter($from->resourceId);
+                $this->addPresenter($from->resourceId);
             }
         }
         else if (array_key_exists('filename', $msg))
         {
-            if ($this->_slideFileName != $msg['filename'])
+            if ($this->slideFileName != $msg['filename'])
             {
-                $this->_slideFileName = $msg['filename'];
+                $this->slideFileName = $msg['filename'];
 
-                $slideFullPath      = $this->_slidePath.$this->_slideFileName;
-                $this->_slide       = new Slide($slideFullPath);
-                $this->_slideLast   = $this->_slide->render('start');
+                $slideFullPath   = $this->slidePath.$this->slideFileName;
+                $this->slide     = new Slide($slideFullPath);
+                $this->slideLast = $this->slide->render('start');
 
-                if ($this->_slideNumber != $this->_slide->slideNumber)
+                if ($this->slideNumber != $this->slide->slideNumber)
                 {
-                    $this->_sendMessageToAll();
+                    $this->sendMessageToAll();
                 }
-                $this->_slideNumber = $this->_slide->slideNumber;
+                $this->slideNumber = $this->slide->slideNumber;
 
-                echo "\nPresenter ({$from->resourceId}) started new slide\n";
+                echo "Presenter ({$from->resourceId}) started new slide\n";
             }
-            else if ($this->_slideFileName == $msg['filename'])
+            else if ($this->slideFileName == $msg['filename'])
             {
-                $msg = array('prev'  => $this->_slide->prev,
-                             'next'  => $this->_slide->next,
-                             'slide' => $this->_slide
-                            );
+                $msg = ['prev'  => $this->slide->prev,
+                        'next'  => $this->slide->next,
+                        'slide' => $this->slide];
                 $msg = json_encode($msg);
                 $from->send($msg);
 
-                echo "\nPresenter resumed slide from ({$from->resourceId})\n";
+                echo "Presenter resumed slide from ({$from->resourceId})\n";
             }
 
-            $this->_stats();
+            $this->stats();
         }
         else if (array_key_exists('action', $msg))
         {
-            echo "\n";
-
             if ($msg['action'] == 'stop')
             {
-                $this->_presenterResourcesId = array();
-                $this->_init();
+                $this->presenterResourcesId = [];
+                $this->init();
 
                 echo "Presenter ({$from->resourceId}) stopped slide\n";
             }
             else
             {
-                $this->_slideLast   = $this->_slide->render($msg['action']);
+                $this->slideLast   = $this->slide->render($msg['action']);
 
-                $this->_sendMessageToAll();
+                $this->sendMessageToAll();
 
-                echo "Presenter slide: {$this->_slideFileName}. ";
-                echo "Slide number: {$this->_slide->slideNumber}. ";
+                echo "Presenter slide: {$this->slideFileName}. ";
+                echo "Slide number: {$this->slide->slideNumber}. ";
                 echo "Action: {$msg['action']}\n";
             }
         }
     }
 
-    private function _sendMessageToAll()
-    {
-        $msgOfViewer    = array('slide' => $this->_slideLast);
-        $msgOfPresenter = array('slide' => $this->_slideLast);
-
-        if ($this->_slide != null)
-        {
-            $msgOfPresenter['prev'] = $this->_slide->prev;
-            $msgOfPresenter['next'] = $this->_slide->next;
-        }
-
-        $msgOfViewer    = json_encode($msgOfViewer);
-        $msgOfPresenter = json_encode($msgOfPresenter);
-
-        foreach ($this->_clients as $client)
-        {
-            if (!$this->_isPresenter($client->resourceId))
-            {
-                $client->send($msgOfViewer);
-            }
-            else
-            {
-                $client->send($msgOfPresenter);
-            }
-        }
-    }
-
+    /**
+     * Web Socket connection is closed
+     *
+     * @param  ConnectionInterface $conn The socket/connection that just
+     *                                   disconnected
+     */
     public function onClose(ConnectionInterface $conn)
     {
-        $this->_clients->detach($conn);
+        $this->clients->detach($conn);
 
-        echo "\n";
-        if ($this->_isPresenter($conn->resourceId))
+        if ($this->isPresenter($conn->resourceId))
         {
-            $this->_removePresenter($conn->resourceId);
+            $this->removePresenter($conn->resourceId);
             echo "Presenter disconnected! ($conn->resourceId)\n";
         }
         else
@@ -200,15 +277,22 @@ class WebSocket implements MessageComponentInterface {
             echo "Connection disconnected! ({$conn->resourceId})\n";
         }
 
-        if (count($this->_presenterResourcesId) == 0)
+        if (count($this->presenterResourcesId) == 0)
         {
-            $this->_init();
+            $this->init();
         }
 
-        $this->_stats();
+        $this->stats();
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e) {
+    /**
+     * Error with one of the sockets
+     * Or somewhere in the app
+     *
+     * @param  ConnectionInterface $conn Client Web Socket connection
+     * @param  Exception           $e    Exception
+     */
+    public function onError(ConnectionInterface $conn, Exception $e) {
         echo "An error has occurred: {$e->getMessage()}\n";
 
         $conn->close();

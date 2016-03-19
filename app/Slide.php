@@ -2,34 +2,105 @@
 
 namespace App;
 
+use App\File;
 use Parsedown;
+
 
 class Slide
 {
-	private $_content;
-	private $_slideCount;
-	private $_contents;
-	private $_parser;
+	/**
+	 * Store Parsedown parser object
+	 *
+	 * @var object
+	 */
+	protected $parser;
 
+	/**
+	 * Contents of presentation file
+	 *
+	 * @var string
+	 */
+	protected $contents;
+
+	/**
+	 * Number block ie slide in the presentation
+	 *
+	 * @var int
+	 */
+	protected $slideCount;
+
+	/**
+	 * There is previous slide or not
+	 *
+	 * @var boolean
+	 */
 	public $prev;
+
+	/**
+	 * There is next slide or not
+	 *
+	 * @var boolean
+	 */
 	public $next;
+
+	/**
+	 * Slide number of the slide
+	 *
+	 * @var int
+	 */
 	public $slideNumber;
 
+
+	/**
+	 * Initialize slide
+	 *
+	 * @param string $filePath Path of presentation file
+	 */
 	public function __construct($filePath)
 	{
-		// TOTO: check file exists
-		$this->_contents   = file_get_contents($filePath);
-		$this->_contents   = explode(PHP_EOL.PHP_EOL.PHP_EOL, $this->_contents);
-		$this->_slideCount = count($this->_contents);
+		$file = new File($filePath);
+		if ($file->load() === false)
+		{
+			echo 'Error! loading file .' .$filePath;
+		}
+
+		$this->contents    = $file->getContents();
+		$this->contents    = explode(PHP_EOL.PHP_EOL.PHP_EOL, $this->contents);
+		$this->slideCount  = count($this->contents);
 		$this->slideNumber = 0;
 
 		$this->prev        = false;
 		$this->next        = false;
 
-		$this->_parser = new Parsedown;
+		$this->parser = new Parsedown;
+	}
+
+	/**
+	 * Convert Markdown content to HTML
+	 *
+	 * @param  string $markdown Markdown content
+	 * @return string           HTML content
+	 */
+	protected function parseHTML($markdown)
+	{
+		$slide = $this->parser->text($markdown);
+		$slide = str_replace("'", "\'", $slide);
+		$slide = str_replace(PHP_EOL, '', $slide);
+		$slide = str_replace('<a href=', '<a target="_blank" href=', $slide);
+		$slide = str_replace('<img src=',
+		                     '<img class="img-responsive" src=',
+						     $slide);
+
+		return $slide;
 	}
 
 
+	/**
+	 * Render Slide content for Web Socket clients
+	 *
+	 * @param  string $action Action
+	 * @return string         Slide content
+	 */
 	public function render($action = 'start')
 	{
 		$this->prev = false;
@@ -50,7 +121,7 @@ class Slide
 		}
 		else if ($action == 'next')
 		{
-			if (($this->slideNumber + 1) <= ($this->_slideCount - 1))
+			if (($this->slideNumber + 1) <= ($this->slideCount - 1))
 			{
 				$this->slideNumber++;
 			}
@@ -61,20 +132,22 @@ class Slide
 			$this->prev = true;
 		}
 
-		if ($this->slideNumber >= ($this->_slideCount - 1))
+		if ($this->slideNumber >= ($this->slideCount - 1))
 		{
 			$this->next = true;
 		}
 
-		$slide = $this->_parser->text($this->_contents[$this->slideNumber]);
-		$slide = str_replace("'",     "\'", $slide);
-		$slide = str_replace(PHP_EOL, "",   $slide);
-		$slide = str_replace('<a href=', '<a target="_blank" href=', $slide);
-		$slide = str_replace('<img src=', '<img class="img-responsive" src=', $slide);
+		$slide = $this->parseHTML($this->contents[$this->slideNumber]);
 
 		return $slide;
 	}
 
+	/**
+	 * Render Slide contents for presenter for Ajax
+	 *
+	 * @param  int    $slideNumber Slide number
+	 * @return array               Slide contents and controls
+	 */
 	public function renderForAjax($slideNumber)
 	{
 		$this->prev = false;
@@ -85,21 +158,18 @@ class Slide
 			$slideNumber = 0;
 			$this->prev = true;
 		}
-		else if ($slideNumber >= ($this->_slideCount - 1))
+		else if ($slideNumber >= ($this->slideCount - 1))
 		{
-			$slideNumber = $this->_slideCount - 1;
+			$slideNumber = $this->slideCount - 1;
 			$this->next = true;
 		}
 
-		$slide = $this->_parser->text($this->_contents[$slideNumber]);
-		$slide = str_replace("'",     "\'", $slide);
-		$slide = str_replace(PHP_EOL, "",   $slide);
-		$slide = str_replace('<a href=', '<a target="_blank" href=', $slide);
-		$slide = str_replace('<img src=', '<img class="img-responsive" src=', $slide);
+		$slide = $this->parseHTML($this->contents[$slideNumber]);
 
-		$msg = array('prev' => $this->prev, 'next' => $this->next,
-		             'slide' => $slide, 'count' => ($this->_slideCount - 1));
-		// $msg = json_encode($msg);
+		$msg = ['prev'  => $this->prev,
+				'next'  => $this->next,
+		        'slide' => $slide,
+		        'count' => ($this->slideCount - 1)];
 
 		return $msg;
 	}

@@ -2,6 +2,7 @@
 
 namespace App;
 
+
 class File
 {
 	/**
@@ -11,19 +12,41 @@ class File
 	 */
 	protected $path;
 
+	/**
+	 * Store file extensions in regex format
+	 *
+	 * @var string
+	 */
 	protected $extensions;
 
+	/**
+	 * Store list of files
+	 *
+	 * @var array
+	 */
 	protected $files = [];
 
+	/**
+	 * Store contents of a file
+	 *
+	 * @var string
+	 */
 	protected $contents;
 
+	/**
+	 * Store message
+	 *
+	 * @var string
+	 */
 	protected $message;
+
 
 	/**
 	 * Set path of file or directory
 	 *
 	 * @param string $path       Path of file or directory
-	 * @param array  $extensions Supported file type extensions
+	 * @param string $regex 	 Regex to limit file listing
+	 * @param array  $extensions Supported file extensions in regex format
 	 */
 	public function __construct($path, $regex='', $extensions='')
 	{
@@ -32,11 +55,11 @@ class File
 		$this->extensions = $extensions;
 	}
 
-
 	/**
-	 * List directory contents of the path
+	 * List directory files
+	 * Limit the files matching with regex pattern and file extensions
 	 *
-	 * @return array List of all files of the path
+	 * @return boolean Directory file listing successful or not
 	 */
 	public function ls()
 	{
@@ -71,16 +94,25 @@ class File
 		}
 	}
 
+	/**
+	 * Get list of files after performing ls in a directory
+	 *
+	 * @return array List of files of directory
+	 */
 	public function getFiles()
 	{
 		return $this->files;
 	}
 
+	/**
+	 * Get message file operation message
+	 *
+	 * @return string File operation message
+	 */
 	public function getMessage()
 	{
 		return $this->message;
 	}
-
 
 	/**
 	 * Format bytes to human readable file size
@@ -118,6 +150,11 @@ class File
         return $bytes;
 	}
 
+	/**
+	 * Delete a file
+	 *
+	 * @return boll Deleting file successful or not
+	 */
 	public function delete()
 	{
 		$fileName = explode('/', $this->path);
@@ -137,6 +174,11 @@ class File
 		return false;
 	}
 
+	/**
+	 * Load contents of a file
+	 *
+	 * @return boolean Loading file contents success or not
+	 */
 	public function load()
 	{
 		if (file_exists($this->path))
@@ -153,6 +195,11 @@ class File
 		}
 	}
 
+	/**
+	 * Get contents of a file
+	 *
+	 * @return string Contents of file
+	 */
 	public function getContents()
 	{
 		return $this->contents;

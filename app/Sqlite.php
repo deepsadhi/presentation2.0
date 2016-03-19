@@ -42,7 +42,6 @@ class Sqlite
         }
     }
 
-
     /**
      * Checks for a DB object and creates one if it's not created
      *
