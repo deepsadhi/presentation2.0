@@ -9,11 +9,43 @@ $("#confirm-delete").on("show.bs.modal", function(e) {
     $("#path").val($(this).find(".btn-ok").attr("path"));
 });
 
-active = false;
-$("#next").attr("disabled", true);
-$("#prev").attr("disabled", true);
+slideCount  = 0;
+slideNumber = 0;
+
+function loadSlide() {
+    active = false;
+
+    url = location.href;
+    url = url.replace("show", "slide");
+    url = url + "/" + slideNumber;
+
+    $.getJSON(url)
+    .done(function(data) {
+        if (data.error == false)
+        {
+            slideCount = data.slide.count;
+
+            $("#container").html(data.slide.slide);
+            $("#prev").attr("disabled", data.slide.prev);
+            $("#next").attr("disabled", data.slide.next);
+        }
+        else
+        {
+            $("#container").html("<h1>Error! on parsing file :(</h1><br>");
+        }
+    })
+    .fail(function(jqXHR, textStatus) {
+        $("#container").html("<h1>Could not load slide :(</h1> <br> <h3>" +
+            textStatus + "</h3>");
+    });
+}
 
 (function() {
+    active = false;
+
+    $("#next").attr("disabled", true);
+    $("#prev").attr("disabled", true);
+
     $("#reconnect").hide();
     $("#stop").hide();
 
@@ -26,6 +58,11 @@ $("#prev").attr("disabled", true);
         msg = JSON.stringify(msg);
         conn.send(msg);
 
+        if (active == false)
+        {
+            loadSlide();
+        }
+
         $("#broadcast").removeClass("label-default");
         $("#broadcast").addClass("label-success");
         $("#broadcast").text("On-line");
@@ -34,7 +71,7 @@ $("#prev").attr("disabled", true);
 
     conn.onmessage = function(e) {
         msg = JSON.parse(e.data);
-        $("#slide").html(msg.slide);
+        $("#container").html(msg.slide);
 
         if (msg.prev === "undefined") {
             $("#prev").attr("disabled", true);
@@ -47,6 +84,14 @@ $("#prev").attr("disabled", true);
         } else {
             $("#next").attr("disabled", msg.next);
         }
+
+        if (msg.action !== "undefined" && msg.action == 'stop')
+        {
+            $("#stop").hide();
+            $("#start").show();
+
+            loadSlide();
+        }
     };
 
     conn.onclose = function(e) {
@@ -54,7 +99,6 @@ $("#prev").attr("disabled", true);
         $("#broadcast").addClass("label-default");
         $("#broadcast").text("Off-line");
         $("#reconnect").show();
-
     };
 
     $("#start").click(function() {
@@ -63,8 +107,7 @@ $("#prev").attr("disabled", true);
         errorMsg = "<h1>Couldn't establish Web Socket connection :(</h1><br>\
                     <h3>Check Presentation 2.0 Web Socket Daemon status.<h3><br>\
                    ";
-
-        $("#container").html("<div id=\"slide\">" + errorMsg + "</div>");
+        $("#container").html(errorMsg);
 
         url      = location.href;
         path     = url.split("/");
@@ -167,36 +210,10 @@ $(function() {
     }
 });
 
-slideCount  = 0;
-slideNumber = 0;
-
-function loadSlide() {
-    url = location.href;
-    url = url.replace("show", "slide");
-    url = url + "/" + slideNumber;
-
-    $.getJSON(url)
-    .done(function(data) {
-        if (data.error == false)
-        {
-            slideCount = data.slide.count;
-
-            $("#container").html(data.slide.slide);
-            $("#prev").attr("disabled", data.slide.prev);
-            $("#next").attr("disabled", data.slide.next);
-        }
-        else
-        {
-            $("#container").html("<h1>Error! on parsing file :(</h1><br>");
-        }
-    })
-    .fail(function(jqXHR, textStatus) {
-        $("#container").html("<h1>Could not load slide :(</h1> <br> <h3>" +
-            textStatus + "</h3>");
-    });
-}
-
-$(document).ready(function() {
+$(document).ready(function () {
     loadSlide();
 });
+
+
+
 

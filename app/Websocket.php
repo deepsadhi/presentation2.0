@@ -40,6 +40,13 @@ class WebSocket implements MessageComponentInterface
     protected $slideLast;
 
     /**
+     * Store presenter last slide action
+     *
+     * @var string
+     */
+    protected $slideAction;
+
+    /**
      * Slide number
      *
      * @var int
@@ -88,6 +95,8 @@ class WebSocket implements MessageComponentInterface
         $this->slideFileName = null;
 
         $this->sendMessageToAll();
+
+        $this->slideAction   = null;
     }
 
     /**
@@ -136,6 +145,7 @@ class WebSocket implements MessageComponentInterface
         $msgForViewer    = ['slide' => $this->slideLast];
         $msgForPresenter = ['slide' => $this->slideLast];
 
+        $msgForPresenter['action'] = $this->slideAction;
         if ($this->slide != null)
         {
             $msgForPresenter['prev'] = $this->slide->prev;
@@ -203,6 +213,8 @@ class WebSocket implements MessageComponentInterface
             {
                 $this->addPresenter($from->resourceId);
             }
+
+            $this->stats();
         }
         else if (array_key_exists('filename', $msg))
         {
@@ -210,7 +222,7 @@ class WebSocket implements MessageComponentInterface
             {
                 $this->slideFileName = $msg['filename'];
 
-                $slideFullPath   = $this->slidePath.$this->slideFileName;
+                $slideFullPath   = $this->slidePath . $this->slideFileName;
                 $this->slide     = new Slide($slideFullPath);
                 $this->slideLast = $this->slide->render('start');
 
@@ -228,7 +240,7 @@ class WebSocket implements MessageComponentInterface
                         'next'  => $this->slide->next,
                         'slide' => $this->slide];
                 $msg = json_encode($msg);
-                $from->send($msg);
+                $this->sendMessageToAll();
 
                 echo "Presenter resumed slide from ({$from->resourceId})\n";
             }
@@ -237,9 +249,9 @@ class WebSocket implements MessageComponentInterface
         }
         else if (array_key_exists('action', $msg))
         {
+            $this->slideAction = $msg['action'];
             if ($msg['action'] == 'stop')
             {
-                $this->presenterResourcesId = [];
                 $this->init();
 
                 echo "Presenter ({$from->resourceId}) stopped slide\n";
