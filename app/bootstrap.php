@@ -1,12 +1,11 @@
 <?php
 
-error_reporting(E_ALL | E_STRICT);
-
 require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\App;
 
 // Start session
+session_save_path('/tmp');
 session_cache_limiter(false);
 session_start();
 

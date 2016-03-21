@@ -15,8 +15,9 @@ $container['flash'] = function () {
 };
 
 // Register twig view on container
-$container['view'] = function ($container) use ($app) {
+$container['view'] = function ($container) {
     $settings = $container->get('settings')['renderer'];
+
     $view = new Twig(
         $settings['template_path'],
         [
@@ -28,7 +29,7 @@ $container['view'] = function ($container) use ($app) {
         $container['request']->getUri()
     ));
 
-    $theme = $app->getContainer()->get('settings')['theme']['name'];
+    $theme = $container->get('settings')['theme']['name'];
     $view->getEnvironment()->addGlobal('theme', $theme);
 
     if ($container['flash']->getMessages())
