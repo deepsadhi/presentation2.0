@@ -188,7 +188,6 @@ function loadSlide() {
             msg = JSON.stringify(msg);
             conn.send(msg);
         } else {
-            if (active) {
             // If presentation is not in broadcast mode send "Prev" make Ajax
             // request
             if (slideNumber > 0) {

@@ -14,6 +14,7 @@ if (PHP_SAPI == 'cli-server') {
 }
 
 
+
 // Store public path
 define('PUBLIC_PATH', getcwd());
 

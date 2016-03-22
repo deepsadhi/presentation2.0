@@ -32,6 +32,17 @@ $container['view'] = function ($container) {
     $theme = $container->get('settings')['theme']['name'];
     $view->getEnvironment()->addGlobal('theme', $theme);
 
+    if ($_SERVER['SERVER_PORT'] == '443')
+    {
+        $assetPath= 'https://' . $_SERVER['HTTP_HOST'];
+    }
+    else
+    {
+        $assetPath= 'http://' . $_SERVER['HTTP_HOST'];
+    }
+    $view->getEnvironment()->addGlobal('asset_path', $assetPath);
+
+
     if ($container['flash']->getMessages())
     {
         $flash = ['message'    => $container['flash']
