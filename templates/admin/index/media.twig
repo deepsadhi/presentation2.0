@@ -15,8 +15,8 @@
             {% for file in files %}
             <tr>
               <td>{{ i }}</td>
-              <td><a target="_blank" href="media/{{ file.name }}">{{ file.name }}</a></td>
-              <td>media/{{ file.name }}</td>
+              <td><a target="_blank" href="{{ app.request.basepath }}/media/{{ file.name }}">{{ file.name }}</a></td>
+              <td>{{ app.request.basepath }}/media/{{ file.name }}</td>
               <td>{{ file.size }}</td>
               <td>{{ file.date }}</td>
               <td>

@@ -10,22 +10,22 @@
     <title>Presentation 2.0</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ asset_path }}/theme/{{ theme }}/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ app.request.basepath }}/theme/{{ theme }}/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="{{ asset_path }}/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="{{ app.request.basepath }}/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ asset_path }}/css/style.css" rel="stylesheet">
+    <link href="{{ app.request.basepath }}/css/style.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="{{ asset_path }}/js/vendor/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="{{ asset_path }}/js/vendor/ie-emulation-modes-warning.js"></script>
+    <!--[if lt IE 9]><script src="{{ app.request.basepath }}/js/vendor/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="{{ app.request.basepath }}/js/vendor/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="{{ asset_path }}/js/vendor/html5shiv.min.js"></script>
-      <script src="{{ asset_path }}/js/vendor/respond.min.js"></script>
+      <script src="{{ app.request.basepath }}/js/vendor/html5shiv.min.js"></script>
+      <script src="{{ app.request.basepath }}/js/vendor/respond.min.js"></script>
     <![endif]-->
   </head>
 
@@ -45,10 +45,10 @@
       </div>
     </footer>
 
-    <script src="{{ asset_path }}/js/vendor/jquery-2.2.1.min.js"></script>
-    <script src="{{ asset_path }}/js/vendor/bootstrap.min.js"></script>
+    <script src="{{ app.request.basepath }}/js/vendor/jquery-2.2.1.min.js"></script>
+    <script src="{{ app.request.basepath }}/js/vendor/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="{{ asset_path }}/js/vendor/ie10-viewport-bug-workaround.js"></script>
+    <script src="{{ app.request.basepath }}/js/vendor/ie10-viewport-bug-workaround.js"></script>
     {% block js %}
     {% endblock %}
   </body>
