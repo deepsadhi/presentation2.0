@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "ext-sqlite": "*",
+        "ext-sqlite3": "*",
         "erusev/parsedown": "1.6.0",
         "cboden/ratchet": "0.3.4",
         "slim/slim-skeleton": "3.0.1",
