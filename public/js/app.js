@@ -33,7 +33,10 @@ function loadSlide() {
             slideCount = data.slide.count;
 
             // Load slide content to DIV container
-            $("#container").html(data.slide.slide);
+            container = $("#container");
+            container.html(data.slide.slide);
+            container.velocity("transition.slideLeftIn");
+
             $("#prev").attr("disabled", data.slide.prev);
             $("#next").attr("disabled", data.slide.next);
         }
@@ -91,8 +94,10 @@ function loadSlide() {
     // Message received on Web Socket connection
     conn.onmessage = function(e) {
         // Load broad casted presentation slide to DIV container
-        msg = JSON.parse(e.data);
-        $("#container").html(msg.slide);
+        msg       = JSON.parse(e.data);
+        container = $("#container");
+        container.html(msg.slide);
+        container.velocity("transition.slideLeftIn");
 
         // Set Previous button
         if (msg.prev === "undefined") {

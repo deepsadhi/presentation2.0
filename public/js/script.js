@@ -15,8 +15,11 @@ $("#reconnect").hide();
 
     // Message ie slide content received on Web Socket connection
     conn.onmessage = function(e) {
-      msg = JSON.parse(e.data);
+      msg       = JSON.parse(e.data);
+      container = $("#container");
+
       $("#container").html(msg.slide);
+      container.velocity("transition.slideLeftIn");
     };
 
     // Web Socket connection is closed
