@@ -40,7 +40,7 @@ $ php bin/server.php
 ```bash
 $ cd Presentation2.0
 $ php -S 0.0.0.0:8000 -t public/
-
+```
 
 ### How to open Presentation2.0 in presenter mode?
 
