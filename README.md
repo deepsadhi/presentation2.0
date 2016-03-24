@@ -1,6 +1,6 @@
 # Presentation2.0
 
-Presentation2.0 is a PHP Web App that helps you quickly prepare and present presentation simply from Markdown file.
+Presentation2.0 is a Web App that helps you quickly prepare and present presentation simply from Markdown file.
 
 
 ## Installation
