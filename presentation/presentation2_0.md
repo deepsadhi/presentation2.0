@@ -45,4 +45,5 @@ $ php -S 0.0.0.0:8000 -t public/
 
 ## License
 
-Presentation2.0 is licensed under the GPLv3 license. See [License File](https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE) for more information.
+Presentation2.0 is licensed under the GPLv3 license. See [License File](LICENSE)
+ for more information.

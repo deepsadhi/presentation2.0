@@ -70,7 +70,7 @@ $ php -S 0.0.0.0:8000 -t public/
 * Enter presentation **Title** and upload Markdown file
 
 ##### Example presenation content sperated by three new line
-![Slide block](blob:https%3A//drive.google.com/3fadf70a-7178-4fe8-8991-dfa8a3cfc181)
+![Slide block](/media/block.png)
 
 For more details check [Prasedown](http://parsedown.org/)
 
@@ -91,7 +91,7 @@ For more details check [Prasedown](http://parsedown.org/)
 ```
 
 ##### URL
-![Media URL](blob:https%3A//drive.google.com/b2655827-f871-4059-98f7-aa0114c7b775)
+![Media URL](/media/media.png)
 
 
 ### How to take control of slide from another device?

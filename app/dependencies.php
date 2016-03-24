@@ -21,7 +21,7 @@ $container['view'] = function ($container) {
     $view = new Twig(
         $settings['template_path'],
         [
-        	// 'cache' => $settings['cache_path']
+        	'cache' => $settings['cache_path']
         ]
     );
     $view->addExtension(new TwigExtension(

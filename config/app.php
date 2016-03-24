@@ -3,7 +3,7 @@
 return [
     'settings' => [
         // Display errors
-        'displayErrorDetails' => true,
+        'displayErrorDetails' => false,
 
         // Renderer settings
         'renderer' => [

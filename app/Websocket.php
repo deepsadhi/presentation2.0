@@ -79,6 +79,8 @@ class WebSocket implements MessageComponentInterface
         $this->slidePath            = $settings['presentation']['presentation'];
         $this->presenterResourcesId = [];
 
+        echo "Presentation2.0 daemon stared";
+
         $this->init();
     }
 

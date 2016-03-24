@@ -1,8 +1,7 @@
 {
     "name": "deepsadhi/presentation2.0",
-    "type": "framework",
-    "description": "Presentation tool",
-    "keywords": ["presentation", "markdown", "slide sync"],
+    "description": "Presentation2.0 is PHP Web App that helps you quickly prepare and present presentation simply from Markdown file.",
+    "keywords": ["presentation", "markdown", "slide sync", "presentation2.0", "slide"],
     "homepage": "https://github.com/deepsadhi/presentation2.0",
     "license": "GPLv3",
     "authors": [
@@ -15,15 +14,15 @@
     "require": {
         "php": ">=5.5.0",
         "ext-pdo": "*",
-        "erusev/parsedown": "1.6.0",
-        "cboden/ratchet": "0.3.4",
-        "slim/slim-skeleton": "3.0.1",
-        "slim/twig-view": "2.0.0",
         "slim/csrf": "0.6.0",
-        "slim/flash": "0.1.0"
+        "slim/flash": "0.1.0",
+        "cboden/ratchet": "0.3.4",
+        "slim/twig-view": "2.0.0",
+        "erusev/parsedown": "1.6.0",
+        "slim/slim-skeleton": "3.0.1"
     },
     "suggest": {
-        "ext-pdo_sqlite": "For SQLite databases"
+        "ext-pdo_sqlite": "For SQLite database"
     },
     "autoload": {
         "psr-4": {
