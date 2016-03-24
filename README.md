@@ -16,14 +16,14 @@ $ composer install
 
 Run Presentation 2.0 daemon:
 ```bash
-* $ cd Presentation2.0
-* $ php bin/server.php
+$ cd Presentation2.0
+$ php bin/server.php
 ```
 
 Make Presentation 2.0 live on your network:
 ```bash
-* $ cd Presentation2.0
-* $ php -S 0.0.0.0:8000 -t public
+$ cd Presentation2.0
+$ php -S 0.0.0.0:8000 -t public
 ```
 
 For presenter:
