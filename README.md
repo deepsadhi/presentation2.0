@@ -7,24 +7,35 @@ All your GitHub repository README is ready to present on Presentation2.0.
 ## Installation
 
 ```bash
-$ git clone https://github.com/deepsadhi/presentation2.0.git to /var/www/html
+$ git clone https://github.com/deepsadhi/presentation2.0.git
 $ cd presentation2.0
 $ composer install
 ```
 
 ## Usage
 
-For presenter:
+Run Presentation 2.0 daemon:
+```bash
+* $ cd Presentation2.0
+* $ php bin/server.php
+```
 
-- [presentation2.0]$ php bin/server.php
-- Open http://localhost/presentation2.0/public/admin/
-- Login with admin and admin as default username and password
-- Open Markdown file
-- Click on start to start the presentation
+Make Presentation 2.0 live on your network:
+```bash
+* $ cd Presentation2.0
+* $ php -S 0.0.0.0:8000 -t public
+```
+
+For presenter:
+* Open http://localhost:8000/login in your browser
+* Login with admin and admin as default username and password
+* Click on bootstrap.md
+* Click on Start to broadcast presentation to viewer
+* Control the slide with Left, Right, Swipe Left, Swipe Right, Left Key or Right Key
 
 
 For Viewer:
-- Open server http://Server IP Address/presentation2.0/public
+- Open server http://Server IP Address:8000
 
 
 ## License
