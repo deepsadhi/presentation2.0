@@ -14,13 +14,16 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "ext-sqlite3": "*",
+        "ext-pdo": "*",
         "erusev/parsedown": "1.6.0",
         "cboden/ratchet": "0.3.4",
         "slim/slim-skeleton": "3.0.1",
         "slim/twig-view": "2.0.0",
         "slim/csrf": "0.6.0",
         "slim/flash": "0.1.0"
+    },
+    "suggest": {
+        "ext-pdo_sqlite": "For SQLite databases"
     },
     "autoload": {
         "psr-4": {
