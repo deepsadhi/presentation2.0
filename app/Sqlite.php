@@ -1,10 +1,25 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 use \PDO;
 
 
+/**
+ * A Sqlite class
+ *
+ * Establish Sqlite connection
+ *
+ * @package Presentation2.0
+ */
 class Sqlite
 {
     /**

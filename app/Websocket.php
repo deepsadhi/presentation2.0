@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 use App\Slide;
@@ -9,6 +17,15 @@ use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
 
+/**
+ * A WebSocket class
+ *
+ * Mange Web Socket connections
+ * Allow presenter to control slides
+ * Send slides to all viewers
+ *
+ * @package Presentation2.0
+ */
 class WebSocket implements MessageComponentInterface
 {
     /**

@@ -1,9 +1,9 @@
-# Presentation2.0
+### Presentation2.0
 
 Presentation2.0 is a Web App that helps you quickly prepare and present presentation simply from Markdown file.
 
 
-## Installation
+### Installation
 
 It's recommended that you use [Composer](https://getcomposer.org/) to install Presentation2.0.
 
@@ -14,7 +14,7 @@ $ composer create-project deepsadhi/presentation2.0 presentation2.0 dev-dev
 This will install Presentation2.0 and all required dependencies. Presentation2.0 requires PHP 5.5.0 or newer.
 
 
-## Usage
+### Usage
 
 Run Presentation 2.0 daemon:
 ```bash
@@ -29,20 +29,26 @@ $ php -S 0.0.0.0:8000 -t public/
 ```
 
 
-## How to open Presentation2.0 in presenter mode?
+### Open Presentation2.0 in presenter mode
 
-* Open **http://localhost:8000/login** in your browser
-* Login with **admin** and **admin** as default username and password
-* Click on **presentation2_0.md**
-* Click on **Start** button to broadcast presentation to viewers (*the all devices connected to the network*)
-* Control the slide with **Prev** button, **Next**, **Swipe Left** touch, **Swipe Right** touch, **Left Key** or **Right Key**
-
-
-## How to open Presentation2.0 in viewer mode?
-
-*  Open server **http://Server IP Address:8000**
+* Open http://localhost:8000/login in your browser
+* Login with admin and admin as default username and password
+* Click on presentation2_0.md
+* Click on Start button to broadcast presentation to viewers (*the all devices connected to the network*)
+* Control the slide with Prev button, Next, Swipe Left touch, Swipe Right touch, Left Key or Right Key
 
 
-## License
+### Open Presentation2.0 in viewer mode
+
+*  Open server http://Server_IP_Address:8000
+
+
+### Documentation
+
+* [API Docs](http://bctians.com/presentation2.0/docs/)
+* [User guide](https://github.com/deepsadhi/presentation2.0/blob/master/USER_GUIDE.md)
+
+
+### License
 
 Presentation2.0 is licensed under the GPLv3 license. See [License File](https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE) for more information.

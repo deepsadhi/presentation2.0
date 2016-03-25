@@ -1,11 +1,26 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 use App\File;
 use Parsedown;
 
 
+/**
+ * A Slide class
+ *
+ * Parses Markdown contents to HTML
+ *
+ * @package Presentation2.0
+ */
 class Slide
 {
 	/**
@@ -23,7 +38,7 @@ class Slide
 	protected $contents;
 
 	/**
-	 * Number block ie slide in the presentation
+	 * Number of blocks ie number slide in the presentation
 	 *
 	 * @var int
 	 */

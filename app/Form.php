@@ -1,11 +1,26 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 use App\User;
 use \Exception;
 
 
+/**
+ * A Form class
+ *
+ * Controls all forms of the app
+ *
+ * @package Presentation2.0
+ */
 class Form
 {
 	/**

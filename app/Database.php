@@ -1,11 +1,26 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 use \PDO;
 use App\Sqlite;
 
 
+/**
+ * A Database class
+ *
+ * Perform UPDATE and SELECT operations
+ *
+ * @package Presentation2.0
+ */
 class Database
 {
     /**
@@ -137,9 +152,10 @@ class Database
     /**
      * Query record in table
      *
-     * @param  string  $table Table name
-     * @param  array   $data  Data to be queried
-     * @return boolean        Query successfully executed or not
+     * @param  string   $table Table name
+     * @param  array    $data  Data to be queried
+     * @param  int|null $limit Limit query results
+     * @return boolean         Query successfully executed or not
      */
     public function query($table, array $data, $limit = null)
     {

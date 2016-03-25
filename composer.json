@@ -14,6 +14,7 @@
     "require": {
         "php": ">=5.5.0",
         "ext-pdo": "*",
+        "ext-pdo_sqlite":"*",
         "slim/csrf": "0.6.0",
         "slim/flash": "0.1.0",
         "cboden/ratchet": "0.3.4",
@@ -21,12 +22,12 @@
         "erusev/parsedown": "1.6.0",
         "slim/slim-skeleton": "3.0.1"
     },
-    "suggest": {
-        "ext-pdo_sqlite": "For SQLite database"
-    },
     "autoload": {
         "psr-4": {
             "App\\": "app"
         }
+    },
+    "config": {
+        "preferred-install": "dist"
     }
 }

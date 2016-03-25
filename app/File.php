@@ -1,8 +1,24 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 
+/**
+ * A File class
+ *
+ * Access and manage files
+ * Get contents of file
+ *
+ * @package Presentation2.0
+ */
 class File
 {
 	/**

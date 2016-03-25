@@ -1,10 +1,27 @@
 <?php
 
+/**
+ * Presentation2.0
+ *
+ * @link      https://github.com/deepsadhi/presentation2.0
+ * @license   https://github.com/deepsadhi/presentation2.0/blob/master/LICENSE
+ *            (GPLv3)
+ */
+
 namespace App;
 
 use App\Database;
 
 
+/**
+ * A User class
+ *
+ * Manage user's informations
+ * Authenticate and change user's username and password
+ * Create and destroy sessions
+ *
+ * @package Presentation2.0
+ */
 class User
 {
 	/**
