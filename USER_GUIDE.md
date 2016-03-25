@@ -71,7 +71,7 @@ $ php -S 0.0.0.0:8000 -t public/
 * Enter presentation Title and upload Markdown file
 
 ##### Example presenation content sperated by three new line
-![Slide block](https://photos-5.dropbox.com/t/2/AAAqmQwj8EXc0tY1l_sMld9cK5-G-Gx93hUo8X0DvKBU4g/12/3266404/png/32x32/3/1458864000/0/2/block.png/EL_7vAIYwwggAigC/yi7B24pXfhVdMhlDWx9vfrKxljc9j-q-vJTMFH77Q4U?size_mode=3&size=1024x768)
+![Slide block](https://photos-1.dropbox.com/t/2/AADryeEkvLcPXJ84DFJnj4P5bhu-Iam2ZMbCRUtuonNJiw/12/3266404/png/32x32/3/1458936000/0/2/block.png/EL_7vAIYxAggAigC/yi7B24pXfhVdMhlDWx9vfrKxljc9j-q-vJTMFH77Q4U?size_mode=3&size=1024x768)
 
 For more details check [Prasedown](http://parsedown.org/)
 
@@ -92,7 +92,7 @@ For more details check [Prasedown](http://parsedown.org/)
 ```
 
 ##### URL
-![Media URL](https://photos-6.dropbox.com/t/2/AAA5HwoSqgZ7t6_tS7ZGqiDDGgjRuRspZXY5MKOgySVvIQ/12/3266404/png/32x32/3/1458864000/0/2/media.png/EL_7vAIYwwggAigC/Mqx9JQQ9j3tX8FV-UrIVudUk02ku4N5rxfNw5x5yqjg?size_mode=3&size=1024x768)
+![Media URL](https://photos-4.dropbox.com/t/2/AADqHHmfZjUePk4uNXUP4JWTtzpTxYkiZPnPUdFbpagFDQ/12/3266404/png/32x32/3/1458936000/0/2/media.png/EL_7vAIYxAggAigC/Mqx9JQQ9j3tX8FV-UrIVudUk02ku4N5rxfNw5x5yqjg?size_mode=3&size=1024x768)
 
 
 ### How to take control of slide from another device?
