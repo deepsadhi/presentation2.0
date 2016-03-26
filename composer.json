@@ -1,6 +1,6 @@
 {
     "name": "deepsadhi/presentation2.0",
-    "description": "Presentation2.0 is PHP Web App that helps you quickly prepare and present presentation simply from Markdown file.",
+    "description": "Presentation2.0 is a Web App that helps you quickly prepare and present presentation simply from Markdown file.",
     "keywords": ["presentation", "markdown", "slide sync", "presentation2.0", "slide"],
     "homepage": "https://github.com/deepsadhi/presentation2.0",
     "license": "GPLv3",
