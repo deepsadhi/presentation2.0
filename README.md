@@ -40,7 +40,7 @@ $ php -S 0.0.0.0:8000 -t public/
 
 ### Open Presentation2.0 in viewer mode
 
-*  Open server http://Server_IP_Address:8000
+*  Open server http://Server_IP_Address:8000 in your browser
 
 
 ### Documentation

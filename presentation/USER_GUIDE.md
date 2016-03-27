@@ -54,7 +54,7 @@ $ php -S 0.0.0.0:8000 -t public/
 
 ### How to open Presentation2.0 in viewer mode?
 
-* Open server http://Server_IP_Address:8000
+* Open server http://Server_IP_Address:8000 in your browser
 
 
 ### What is default username and password?
