@@ -25,7 +25,7 @@ $ php bin/server.php
 Make Presentation2.0 live to all devices connected to the network:
 ```bash
 $ cd Presentation2.0
-$ php -S 0.0.0.0:8000 -t public/
+$ php -S 0.0.0.0:8000 -t public
 ```
 
 
