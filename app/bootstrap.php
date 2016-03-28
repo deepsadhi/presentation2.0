@@ -17,7 +17,8 @@ require __DIR__ . '/../vendor/autoload.php';
 use Slim\App;
 
 // Start session
-session_save_path('/tmp');
+$sessionPath = __DIR__ . '/../session';
+session_save_path($sessionPath);
 session_cache_limiter(false);
 session_start();
 
