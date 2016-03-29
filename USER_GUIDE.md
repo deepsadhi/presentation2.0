@@ -12,6 +12,7 @@ Presentation2.0 is a Web App that helps you quickly prepare and present presenta
 
 ### What are Presentation2.0 requirements?
 * php >=5.5.0
+* php-sqlite extension
 * [Composer](https://getcomposer.org/)
 
 

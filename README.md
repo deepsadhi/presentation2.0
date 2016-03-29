@@ -11,7 +11,7 @@ It's recommended that you use [Composer](https://getcomposer.org/) to install Pr
 $ composer create-project deepsadhi/presentation2.0 presentation2.0 dev-dev
 ```
 
-This will install Presentation2.0 and all required dependencies. Presentation2.0 requires PHP 5.5.0 or newer.
+This will install Presentation2.0 and all required dependencies. Presentation2.0 requires PHP 5.5.0 or newer with sqlite extension.
 
 
 ### Usage
