@@ -24,7 +24,7 @@ $ php bin/server.php
 
 Make Presentation2.0 live to all devices connected to the network:
 ```bash
-$ cd Presentation2.0
+$ cd presentation2.0
 $ php -S 0.0.0.0:8000 -t public
 ```
 
@@ -32,7 +32,7 @@ $ php -S 0.0.0.0:8000 -t public
 ### Open Presentation2.0 in presenter mode
 
 * Open http://localhost:8000/login in your browser
-* Login with admin and admin as default username and password
+* Login with _admin_ and _admin_ as default username and password
 * Click on presentation2_0.md
 * Click on Start button to broadcast presentation to viewers (*the all devices connected to the network*)
 * Control the slide with Prev button, Next, Swipe Left touch, Swipe Right touch, Left Key or Right Key
