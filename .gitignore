@@ -1,7 +1,7 @@
 /vendor
 /tmp
 /session/*
-/cache/*
+/cache/s*
 *.sublime-project
 *.sublime-workspace
 *~
