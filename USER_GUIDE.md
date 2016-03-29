@@ -64,6 +64,17 @@ $ php -S 0.0.0.0:8000 -t public
 * Change your username and password from settings menu
 
 
+### I am not being able to login?
+
+* Check you have installed php-sqlite extension or not
+
+```bash
+$ sudo apt-get install php5-sqlite
+```
+
+More info on php-sqlite can be found [here](http://php.net/manual/en/sqlite.installation.php)
+
+
 ### How to create presentation?
 
 * Write presentation contents in [Markdown](http://daringfireball.net/projects/markdown/), [GitHub flavored Markdown](https://help.github.com/categories/writing-on-github/) or [Markdown with Extra extension file](https://michelf.ca/projects/php-markdown/extra/). Yup your GitHub Repo README file will work ;)
