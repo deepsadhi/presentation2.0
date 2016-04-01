@@ -88,9 +88,9 @@ More info on php-sqlite can be found [here](http://php.net/manual/en/sqlite.inst
 For more details check [Prasedown](http://parsedown.org/)
 
 
-### How to embed media in presentation?
+### Can I embed media files in presentation?
 
-* Currently image extensions (png, jpg, jpeg, bmp, gif or svg) can be only embedded in presentation.
+* Currently image files with extensions (png, jpg, jpeg, bmp, gif or svg) can be only embedded in presentation.
 
 
 ### How to embed image in presentation?
@@ -137,7 +137,7 @@ For more details check [Prasedown](http://parsedown.org/)
 
 Open presentation.20/config/app.php.
 ```php
-'timezone' => 'Asia/Kathmandu',
+"timezone" => "Asia/Kathmandu",
 ```
 Find above line and change your timezone.
 
