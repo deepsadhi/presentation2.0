@@ -26,6 +26,9 @@ session_start();
 $settings = require __DIR__ . '/../config/app.php';
 $app = new App($settings);
 
+// Set timezone
+date_default_timezone_set($settings['settings']['timezone']);
+
 // Set up dependencies
 require __DIR__ . '/../app/dependencies.php';
 

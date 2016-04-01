@@ -3,8 +3,13 @@
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="{{ path_for('admin') }}">Presentation 2.0</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div id="navbar-main" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="{{ active_page == 'home' ? 'active' : '' }}"><a href="{{ path_for('admin') }}">Home</a></li>
             <li class="{{ active_page == 'create' ? 'active' : '' }}"><a href="{{ path_for('create') }}">Create</a></li>

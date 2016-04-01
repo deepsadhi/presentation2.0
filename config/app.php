@@ -5,6 +5,9 @@ return [
         // Display errors
         'displayErrorDetails' => false,
 
+        // Timezone
+        'timezone' => 'Asia/Kathmandu';
+
         // Renderer settings
         'renderer' => [
             'template_path' => __DIR__ . '/../templates/',
