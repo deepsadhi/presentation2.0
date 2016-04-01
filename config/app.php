@@ -6,7 +6,7 @@ return [
         'displayErrorDetails' => false,
 
         // Timezone
-        'timezone' => 'Asia/Kathmandu';
+        'timezone' => 'Asia/Kathmandu',
 
         // Renderer settings
         'renderer' => [
