@@ -133,13 +133,22 @@ For more details check [Prasedown](http://parsedown.org/)
 * Open http://localhost:8000/admin/settings in your browser
 
 
+### How to change timezone?
+
+Open presentation.20/config/app.php.
+```php
+'timezone' => 'Asia/Kathmandu',
+```
+Find above line and change your timezone.
+
+
 ### How to change theme?
 
 Open presentation.20/config/app.php.
 ```php
 "theme" => ["name" => "bootswatch/paper"],
 ```
-Find above lines. Search for directory inside presentation2.0/public/theme/bootswatch and replace paper with other available directory names
+Find above line. Search for directory inside presentation2.0/public/theme/bootswatch and replace paper with other available directory names
 
 
 ### How to install more theme?
