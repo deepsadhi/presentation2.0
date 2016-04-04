@@ -3,9 +3,19 @@
 Presentation2.0 is a Web App that helps you quickly prepare and present presentation simply from Markdown file.
 
 
+### Features
+
+- Instantly prepare slide simply from Markdown file
+- Seamless slide sync amongst all the devices connected to the network with WebSocket
+- Control slide from any devices connected to the network. Yup presenting presentation in team is possible ;)
+- Mobile friendly design
+- Supports Bootstrap themes
+- Supports Velocity transition effects
+
+
 ### Installation
 
-It's recommended that you use [Composer](https://getcomposer.org/) to install Presentation2.0.
+It's recommended that you use [Composer](https://getcomposer.org/) to install Presentation2.0. Make sure you have installed php-sqlite extension.
 
 ```bash
 $ composer create-project deepsadhi/presentation2.0 presentation2.0
